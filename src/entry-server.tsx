@@ -1,19 +1,46 @@
-import { StrictMode } from 'react';
 import { renderToString } from 'react-dom/server';
-import App from './App';
-import { StaticRouter } from 'react-router-dom';
+import {
+  createStaticHandler,
+  createStaticRouter,
+  StaticRouterProvider,
+} from 'react-router';
+import routes from './routes';
 
-export function render(url: string) {
-  // Ensure the URL is absolute (prepend a slash if not already present)
-  const absoluteUrl = url.startsWith('/') ? url : `/${url}`;
-  console.log('Incoming URL:', url); // Log the incoming raw URL
-  console.log('Resolved Absolute URL:', absoluteUrl); // Log the resolved absolute URL
-  const html = renderToString(
-    <StrictMode>
-      <StaticRouter location={absoluteUrl}>
-        <App />
-      </StaticRouter>
-    </StrictMode>
+let { query, dataRoutes } = createStaticHandler(routes);
+
+export const handler = async (request: Request) => {
+  // 1. run actions/loaders to get the routing context with `query`
+  let context = await query(request);
+
+  // If `query` returns a Response, send it raw (a route probably a redirected)
+  if (context instanceof Response) {
+    return context;
+  }
+
+  // 2. Create a static router for SSR
+  let router = createStaticRouter(dataRoutes, context);
+
+  // 3. Render everything with StaticRouterProvider
+  let reactToHtml = renderToString(
+    <StaticRouterProvider router={router} context={context} />
   );
-  return { html };
-}
+
+  // Setup headers from action and loaders from deepest match
+  let leaf = context.matches[context.matches.length - 1];
+  let actionHeaders = context.actionHeaders[leaf.route.id];
+  let loaderHeaders = context.loaderHeaders[leaf.route.id];
+  let headers = new Headers(actionHeaders);
+  if (loaderHeaders) {
+    for (let [key, value] of loaderHeaders.entries()) {
+      headers.append(key, value);
+    }
+  }
+
+  headers.set('Content-Type', 'text/html; charset=utf-8');
+
+  // 4. send a response
+  return new Response(reactToHtml, {
+    status: context.statusCode,
+    headers,
+  });
+};
