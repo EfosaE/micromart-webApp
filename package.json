@@ -1,0 +1,35 @@
+{
+  "name": "micromart-webapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "npx remix vite:build",
+    "dev": "node ./server.js",
+    "start": "cross-env NODE_ENV=production node ./server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typecheck": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@remix-run/express": "^2.15.1",
+    "@remix-run/node": "^2.15.1",
+    "@remix-run/react": "^2.15.1",
+    "@vercel/remix": "^2.15.1",
+    "cross-env": "^7.0.3",
+    "express": "^4.21.2",
+    "isbot": "^4.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^2.15.1",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "typescript": "^5.1.6",
+    "vite": "^5.4.11"
+  }
+}
