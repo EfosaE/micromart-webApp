@@ -12,7 +12,7 @@ export async function createAuthCookie(
     httpOnly: settings.httponly || true,
     path: settings.path || '/',
     sameSite: 'none',
-    secure: false,
+    secure: process.env.NODE_ENV === 'production' ? true : false,
   });
 
   // Set the expiration dynamically from settings
