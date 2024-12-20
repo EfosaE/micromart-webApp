@@ -3,7 +3,7 @@ import AuthHeader from './header';
 
 const AuthLayout = () => {
   return (
-    <main>
+    <main className='h-screen container flex flex-col justify-center items-center lg:px-[480px]'>
       <AuthHeader />
       <Outlet />
     </main>

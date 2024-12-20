@@ -2,3 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+.active {
+  color: #8b5cf6;
+}
+
+.notistack-MuiContent-success {
+  background-color: #34d399 !important;
+  color: white; /* Optional */
+}
+
+.notistack-MuiContent-error {
+  background-color: #f87171 !important;
+  color: white; /* Optional */
+}
+
+/* Optional: Adjust padding, border-radius, etc. */
+.notistack-MuiContent {
+  padding: 16px   !important;
+  border-radius: 8px !important;
+}
