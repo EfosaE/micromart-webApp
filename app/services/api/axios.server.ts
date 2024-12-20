@@ -40,7 +40,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     if (error.response.status === 403) {
       // Call your refresh token endpoint
-      const response = await axiosInstance.post('api/v1/auth/refresh');
+      const response = await axiosInstance.post('/api/v1/auth/refresh');
 
       const { accessToken } = response.data;
       console.log(response.data, accessToken);

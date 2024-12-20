@@ -13,6 +13,7 @@ export async function createAuthCookie(
     path: settings.path || '/',
     sameSite: 'none',
     secure: process.env.NODE_ENV === 'production' ? true : false,
+    domain: process.env.NEST_API_URL, // Set the domain explicitly
   });
 
   // Set the expiration dynamically from settings
