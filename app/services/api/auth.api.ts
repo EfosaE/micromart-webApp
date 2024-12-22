@@ -1,7 +1,6 @@
 import { GetUserByEmailAuth, RegisterAccountAuth } from '~/utils/validation';
-import { axiosInstance, axiosRemixInstance } from './axios.server';
-import axios, { AxiosError, isAxiosError } from 'axios';
-import { createUserSession } from '../session.server';
+import { axiosInstance } from './axios.server';
+import axios, { isAxiosError } from 'axios';
 import { UserWithAccessToken } from '~/types';
 
 export const signUpUser = async (userData: RegisterAccountAuth) => {
@@ -73,7 +72,7 @@ export const loginUser = async (userData: GetUserByEmailAuth) => {
 };
 
 export const getUserProfile = async (access_token: string) => {
-     console.log('BE called II');
+  console.log('BE called II');
   try {
     const response = await axiosInstance.get('/api/v1/auth/profile', {
       headers: {
@@ -127,7 +126,7 @@ export const getNewToken = async (refreshToken: string) => {
       }
     );
     console.log(response.data);
-    const newUserData:UserWithAccessToken = response.data;
+    const newUserData: UserWithAccessToken = response.data;
     return newUserData;
   } catch (error) {
     if (isAxiosError(error)) {

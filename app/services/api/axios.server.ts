@@ -1,6 +1,6 @@
 import axios from 'axios';
 import invariant from 'tiny-invariant';
-import { getNewToken } from './auth.api';
+
 
 invariant(process.env.NEST_API_URL, 'No Base URL found FOR NEST');
 invariant(process.env.REMIX_APP_URL, 'No Base URL found FOR REMIX');
@@ -16,15 +16,6 @@ export const axiosInstance = axios.create({
   withCredentials: true, // send cookies along
 });
 
-// Create an axios base instance
-export const axiosRemixInstance = axios.create({
-  baseURL: process.env.REMIX_APP_URL_PROD, // remix
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true, // send cookies along
-});
 
 // // Interceptor to check response headers
 // axiosInstance.interceptors.response.use(
