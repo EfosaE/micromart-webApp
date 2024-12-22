@@ -16,6 +16,7 @@ import { authSchemaWithoutName } from '~/utils/validation';
 import { parseCookie } from '~/utils/cookieUtils';
 import { createAuthCookie } from '~/services/cookies.server';
 import { createUserSession } from '~/services/session.server';
+import { User } from '~/types';
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -23,6 +24,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const email = formData.get('email')?.toString();
   const password = formData.get('password')?.toString();
   const redirectTo = safeRedirect(formData.get('redirectTo')?.toString(), '/');
+
   console.log('redirectUrl:', redirectTo);
 
   try {
@@ -34,9 +36,10 @@ export async function action({ request }: ActionFunctionArgs) {
       const result = await loginUser({ email, password });
       if (result.success && result.headers) {
         const token: string = result.data.accessToken;
+        const user: User = result.data.user;
         const setCookieHeader = result.headers['set-cookie'];
         // convert to object
-        if (setCookieHeader) {
+        if (setCookieHeader) {  
           const parsedCookie = parseCookie(setCookieHeader[0]);
           const authCookie = await createAuthCookie(
             parsedCookie.name,
@@ -49,8 +52,9 @@ export async function action({ request }: ActionFunctionArgs) {
             token,
             redirectTo,
             authCookie,
+            user
           });
-        } // else
+        } // else (no-cookies are sent with the response),
       } else if (!result.success) {
         // Failure: Return the error message to be displayed on the client
         return new Response(JSON.stringify({ loginError: result.error }), {

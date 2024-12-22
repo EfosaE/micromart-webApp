@@ -10,7 +10,7 @@ import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import { authSchema } from '~/utils/validation';
 import { ZodError } from 'zod';
 import { Button } from '~/components/Button';
-import { useContext, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { safeRedirect } from '~/utils/safeRedirect';
 import { signUpUser } from '~/services/api/auth.api';
 

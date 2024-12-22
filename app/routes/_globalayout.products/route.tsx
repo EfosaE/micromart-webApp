@@ -1,9 +1,12 @@
-import React from 'react'
+import { Form } from '@remix-run/react';
+import { useState } from 'react';
 
 const Products = () => {
   return (
-    <div> Products</div>
-  )
-}
+    <div>
+      <p>Products</p>
+    </div>
+  );
+};
 
-export default Products
+export default Products;

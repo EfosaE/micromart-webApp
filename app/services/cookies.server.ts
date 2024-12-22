@@ -1,7 +1,5 @@
 import { createCookie, redirect } from '@remix-run/node'; // or cloudflare/deno
 
-export let authCookie: string;
-
 // Utility function to create cookies
 export async function createAuthCookie(
   name: string,
@@ -12,10 +10,9 @@ export async function createAuthCookie(
     httpOnly: settings.httponly || true,
     path: settings.path || '/',
     sameSite: 'none',
-    secure: process.env.NODE_ENV === 'production' ? true : false,
-    domain: process.env.NEST_API_URL, // Set the domain explicitly
+    secure: true,
   });
-
+  // process.env.NODE_ENV === 'production' ? true :
   // Set the expiration dynamically from settings
   const expires = settings.expires ? new Date(settings.expires) : undefined;
 
@@ -24,6 +21,6 @@ export async function createAuthCookie(
     expires: expires,
     maxAge: settings['max-age'] ? parseInt(settings['max-age'], 10) : undefined,
   });
-  authCookie = serializedAuthCookie;
+
   return serializedAuthCookie;
 }
