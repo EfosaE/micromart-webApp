@@ -9,7 +9,7 @@ console.log('Base URL:', process.env.NEST_API_URL);
 // Create an axios base instance
 export const axiosInstance = axios.create({
   baseURL: process.env.NEST_API_URL, //  NestJS backend URL
-  timeout: 10000,
+  // timeout: 10000, no timeout
   headers: {
     'Content-Type': 'application/json',
   },
