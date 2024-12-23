@@ -10,7 +10,6 @@ import {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUrl = new URL(request.url); // Get the current URL
   const redirectTo = currentUrl.pathname + currentUrl.search; // Preserve the path and query parameters
-  console.log('redirectUrl', redirectTo);
 
   const result = await getUserDataFromSession(request);
 
@@ -39,14 +38,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
             // Redirect with the Set-Cookie header
             return createUserSession({
               request,
-              token,
               redirectTo,
+              token,
               user,
             });
           }
         }
         // If no refresh token or new token is available, logout the user
-        throw await logout(request);
+        throw await logout(request, redirectTo);
 
       default:
         throw new Error('Unexpected status');

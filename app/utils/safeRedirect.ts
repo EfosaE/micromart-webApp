@@ -8,6 +8,7 @@ export function safeRedirect(
   to: FormDataEntryValue | string | null | undefined,
   defaultRedirect: string = DEFAULT_REDIRECT
 ) {
+  console.log('from safe redirect',to)
   if (!to || typeof to !== 'string') {
     return defaultRedirect;
   }

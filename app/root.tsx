@@ -62,21 +62,26 @@ export default function App() {
   return (
     <html>
       <head>
+        <meta charSet='UTF-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         <link rel='icon' href='data:image/x-icon;base64,AA' />
         <Meta />
         <Links />
       </head>
       <body>
-        {!isAuthPage && <Navbar />}
-        <SnackbarProvider
-          maxSnack={3} // Number of toasts visible at a time
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}>
-          <Outlet />
-        </SnackbarProvider>
-        {!isAuthPage && <Footer />}
+        <main>
+          {!isAuthPage && <Navbar />}
+          <SnackbarProvider
+            maxSnack={3} // Number of toasts visible at a time
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}>
+            <Outlet />
+          </SnackbarProvider>
+          {!isAuthPage && <Footer />}
+        </main>
+
         <Scripts />
       </body>
     </html>

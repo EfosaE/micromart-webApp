@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .active {
   color: #8b5cf6;
 }
@@ -21,3 +27,4 @@
   padding: 16px   !important;
   border-radius: 8px !important;
 }
+

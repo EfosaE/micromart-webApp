@@ -53,7 +53,8 @@ export async function createUserSession({
   authCookie?: string;
   user: User;
 }) {
-  console.log('redirectUrl', redirectTo);
+  console.log('redirectUrl from createUserSession', redirectTo);
+
   const authSession = await getAuthSession(request);
   const userSession = await getUserSession(request);
   console.log('Initial session:', authSession.data);
@@ -95,16 +96,13 @@ export async function createUserSession({
   });
 }
 
-
-
-
 export async function getUserDataFromBE(request: Request) {
   const cookiesHeader = request.headers.get('Cookie');
-  console.log('loader called', cookiesHeader)
-  
+  console.log('loader called', cookiesHeader);
+
   const authSession = await getAuthSession(request);
   const access_token: string | undefined = authSession.get('access_token');
-  console.log('access_token', access_token)
+  console.log('access_token', access_token);
   // call NestJS BE
   if (access_token) {
     const user = await getUserProfile(access_token);
@@ -114,8 +112,8 @@ export async function getUserDataFromBE(request: Request) {
     // call refresh... BE gave an error
     return { status: 403, error: 'access_token expired' };
   }
-   // call refresh... access_token is undefined
-   return { status: 403, error: 'access_token expired or deleted' };
+  // call refresh... access_token is undefined
+  return { status: 403, error: 'access_token expired or deleted' };
 }
 
 export async function getUserDataFromSession(request: Request) {
@@ -130,7 +128,7 @@ export async function getUserDataFromSession(request: Request) {
   }
 }
 
-export async function logout(request: Request) {
+export async function logout(request: Request, redirectTo:string) {
   const authSession = await getAuthSession(request);
   const userSession = await getUserSession(request);
 
@@ -146,6 +144,9 @@ export async function logout(request: Request) {
     await userSessionStorage.destroySession(userSession)
   );
 
-  // Redirect with both cookies being cleared
-  return redirect('/login', { headers });
+  // Encode the redirectTo parameter
+  const encodedRedirectTo = encodeURIComponent(redirectTo);
+
+  // Redirect to login with the encoded redirectTo query parameter
+  return redirect(`/login?redirectTo=${encodedRedirectTo}`, { headers });
 }

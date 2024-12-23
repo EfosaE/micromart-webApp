@@ -10,10 +10,10 @@ import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import { authSchema } from '~/utils/validation';
 import { ZodError } from 'zod';
 import { Button } from '~/components/Button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { safeRedirect } from '~/utils/safeRedirect';
 import { signUpUser } from '~/services/api/auth.api';
-
+import { useSnackbar } from 'notistack';
 
 export const meta: MetaFunction = () => [{ title: 'Sign Up' }]; // this causes remix to behave a weird way in dev
 
@@ -34,7 +34,14 @@ export async function action({ request }: ActionFunctionArgs) {
       const result = await signUpUser({ name, email, password });
       console.log(result);
       if (result.success) {
-        return redirect(`/login?redirectTo=${encodeURIComponent(redirectTo)}`);
+        const successMessage = encodeURIComponent(
+          'Sign up successful! Please log in.'
+        );
+        return redirect(
+          `/login?redirectTo=${encodeURIComponent(
+            redirectTo
+          )}&successMessage=${successMessage}`
+        );
       } else if (!result.success) {
         console.log(result);
         // Failure: Return the error message to be displayed on the client
@@ -65,6 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Register() {
   const [password, setPassword] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState(false);
   const actionData = useActionData<typeof action>();
   const [searchParams] = useSearchParams();
@@ -72,23 +80,17 @@ export default function Register() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
- 
-
-  // useEffect(() => {
-
-  //   if (actionData?.signUpError) {
-  //     // Check if there are multiple errors
-  //     if (Array.isArray(actionData.signUpError)) {
-  //       // Show each error as a separate toast
-  //       actionData.signUpError.forEach((error: string) => {
-  //         toast.error(error);
-  //       });
-  //     } else {
-  //       // Single error
-  //       toast.error(actionData.signUpError);
-  //     }
-  //   }
-  // }, [actionData]);
+  useEffect(() => {
+    if (actionData?.signUpError) {
+      if (Array.isArray(actionData.signUpError)) {
+        actionData.signUpError.forEach((error: string) => {
+          enqueueSnackbar(error, { variant: 'error' });
+        });
+      } else {
+        enqueueSnackbar(actionData.signUpError, { variant: 'error' });
+      }
+    }
+  }, [actionData]);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -105,7 +107,7 @@ export default function Register() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           error={actionData?.errors?.password}
-          autoComplete='current-password' // Allow autofill suggestion for new password
+          autoComplete='new-password' // Allow autofill suggestion for new password
           togglePasswordVisibility={togglePasswordVisibility}
           showPassword={showPassword}
         />
