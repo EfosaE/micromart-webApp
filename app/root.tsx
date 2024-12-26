@@ -34,12 +34,28 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  console.log('root loader ran');
-  return new Response(JSON.stringify({ user: await getUser(request) }), {
+  const url = new URL(request.url);
+
+  // Define public routes
+  const publicRoutes = ['/login', '/signup', '/'];
+  if (publicRoutes.includes(url.pathname)) {
+    console.log(`Public route: ${url.pathname}`);
+    return null;
+  }
+
+  console.log('Running root loader for protected route');
+  const user = await getUser(request);
+  if (!user) {
+    console.log('No user found, redirecting to login');
+    return redirect(`/login?redirectTo=${encodeURIComponent(url.pathname)}`);
+  }
+
+  return new Response(JSON.stringify({ user }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   });
 };
+
 
 export default function App() {
   const location = useLocation();
