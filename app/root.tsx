@@ -1,11 +1,20 @@
-import { Links, Meta, Outlet, Scripts, useLocation } from '@remix-run/react';
+import {
+  Links,
+  Meta,
+  Outlet,
+  redirect,
+  Scripts,
+  useLocation,
+} from '@remix-run/react';
 
-import 'react-toastify/dist/ReactToastify.css'; // Don't forget to import the CSS
-import type { LinksFunction } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import stylesheet from '~/tailwind.css?url';
 import Footer from '~/components/Footer';
 import Navbar from '~/components/Navbar';
 import { SnackbarProvider } from 'notistack';
+import Header from './components/Header';
+import { getUser } from './services/session.server';
+import { isUser } from './types';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -24,33 +33,13 @@ export const links: LinksFunction = () => [
   },
 ];
 
-// export function ErrorBoundary() {
-//   const error = useRouteError();
-//   console.error(error);
-//   return (
-//     <html>
-//       <head>
-//         <title>Oh no!</title>
-//         <link rel='icon' href='data:image/x-icon;base64,AA' />
-//         <Meta />
-//         <Links />
-//       </head>
-//       <body>
-//         {
-//           error instanceof Error && (
-//             <div>
-//               <h1>Error</h1>
-//               <p>{error.message}</p>
-//               <p>The stack trace is:</p>
-//               <pre>{error.stack}</pre>
-//             </div>
-//           ) /* add the UI you want your users to see */
-//         }
-//         <Scripts />
-//       </body>
-//     </html>
-//   );
-// }
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  console.log('root loader ran');
+  return new Response(JSON.stringify({ user: await getUser(request) }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
 
 export default function App() {
   const location = useLocation();
@@ -64,23 +53,23 @@ export default function App() {
       <head>
         <meta charSet='UTF-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-        <link rel='icon' href='data:image/x-icon;base64,AA' />
+        <link rel='icon' type='image/x-icon' href='/micromart.png' />
+        {/* //sizes='64x64' */}
+
         <Meta />
         <Links />
       </head>
-      <body>
-        <main>
-          {!isAuthPage && <Navbar />}
-          <SnackbarProvider
-            maxSnack={3} // Number of toasts visible at a time
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}>
-            <Outlet />
-          </SnackbarProvider>
-          {!isAuthPage && <Footer />}
-        </main>
+      <body className='font-space'>
+        {!isAuthPage && <Header />}
+        <SnackbarProvider
+          maxSnack={3} // Number of toasts visible at a time
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}>
+          <Outlet />
+        </SnackbarProvider>
+        {!isAuthPage && <Footer />}
 
         <Scripts />
       </body>

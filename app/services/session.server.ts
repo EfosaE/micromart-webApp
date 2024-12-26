@@ -1,7 +1,18 @@
-import { createCookieSessionStorage, redirect } from '@remix-run/node';
+import {
+  createCookie,
+  createCookieSessionStorage,
+  redirect,
+} from '@remix-run/node';
 import invariant from 'tiny-invariant';
-import { getUserProfile } from './api/auth.api';
-import { isUser, User } from '~/types';
+import { getNewToken, getUserProfile } from './api/auth.api';
+import {
+  isUser,
+  SuccessResponse,
+  User,
+  ErrorResponse,
+  isSuccessResponse,
+  isErrorResponse,
+} from '~/types';
 
 invariant(process.env.USER_SESSION_SECRET, 'USER_SESSION_SECRET must be set');
 invariant(process.env.AUTH_SESSION_SECRET, 'AUTH_SESSION_SECRET must be set');
@@ -53,27 +64,15 @@ export async function createUserSession({
   authCookie?: string;
   user: User;
 }) {
-  console.log('redirectUrl from createUserSession', redirectTo);
-
   const authSession = await getAuthSession(request);
   const userSession = await getUserSession(request);
-  console.log('Initial session:', authSession.data);
 
   // Unset existing token (if any) to avoid stale data, for refresh endpoint
   authSession.unset('access_token');
-  console.log('Old access_token cleared.');
-
-  console.log('accesstoken', token);
-  console.log('user', user);
-
-  // // Set the new token
-  // session.set('access_token', token);
 
   // Set token and profile in session
   authSession.set('access_token', token);
   userSession.set('user_profile', user);
-
-  console.log('New auth session data:', authSession.data);
 
   const headers = new Headers();
   // Append each cookie separately
@@ -90,45 +89,81 @@ export async function createUserSession({
       maxAge: 60 * 15, // 15 minutes = 1200 seconds
     })
   );
-  console.log('Final headers:', headers);
+
+  console.log(redirectTo, headers);
+
   return redirect(redirectTo, {
     headers,
   });
 }
 
-export async function getUserDataFromBE(request: Request) {
-  const cookiesHeader = request.headers.get('Cookie');
-  console.log('loader called', cookiesHeader);
-
+export async function getAccessToken(request: Request) {
   const authSession = await getAuthSession(request);
   const access_token: string | undefined = authSession.get('access_token');
-  console.log('access_token', access_token);
-  // call NestJS BE
-  if (access_token) {
-    const user = await getUserProfile(access_token);
-    if (user && isUser(user)) {
-      return { status: 200, user };
-    }
-    // call refresh... BE gave an error
-    return { status: 403, error: 'access_token expired' };
-  }
-  // call refresh... access_token is undefined
-  return { status: 403, error: 'access_token expired or deleted' };
+
+  return access_token;
 }
 
-export async function getUserDataFromSession(request: Request) {
+export async function getUserDataFromBE(
+  request: Request
+): Promise<SuccessResponse | ErrorResponse> {
+  console.log('BE called');
+  const access_token = await getAccessToken(request);
+  if (access_token) {
+    // call profile endpoint for new user details
+    const response = await getUserProfile(access_token);
+    console.log('getUserProfile', response);
+    return response;
+  }
+  // return 403 so refresh endpoint is called by the layout loader for new accesstoken and new user details using refresh cookie
+  return { success: false, error: 'no access token', statusCode: 403 };
+}
+
+export async function getUserDataFromSession(
+  request: Request
+): Promise<User | null> {
   const userSession = await getUserSession(request);
   const user: User | undefined | null = userSession.get('user_profile');
   if (user && isUser(user)) {
-    return { status: 200, user };
-  } else {
-    // user session has expired; it has been deleted... call the BE
-    const response = await getUserDataFromBE(request);
-    return response;
+    return user;
   }
+  return null;
 }
 
-export async function logout(request: Request, redirectTo:string) {
+export async function getUser(request: Request) {
+  // 1. Try getting user from session
+  const user = await getUserDataFromSession(request);
+  console.log('session called', user);
+  if (user) {
+    return user;
+  }
+
+  // 2. If no session, call the backend to fetch user
+  const response = await getUserDataFromBE(request);
+
+  if (isSuccessResponse(response)) {
+    return response.data; // Return user directly if successful
+  }
+
+  // 3. If backend returns error, check for refresh token
+  if (isErrorResponse(response)) {
+    const cookiesHeader = request.headers.get('cookie');
+    const refreshTokenCookie = createCookie('refresh_token');
+    const refresh_token = await refreshTokenCookie.parse(cookiesHeader);
+
+    // 4. Try refreshing the token if refresh token exists
+    if (refresh_token) {
+      const payload = await getNewToken(refresh_token);
+      const token: string = payload.accessToken;
+      const user = payload.user;
+      console.log('token payload', payload);
+      return { user, token };
+    }
+  }
+  return null;
+}
+
+export async function logout(request: Request) {
   const authSession = await getAuthSession(request);
   const userSession = await getUserSession(request);
 
@@ -144,9 +179,6 @@ export async function logout(request: Request, redirectTo:string) {
     await userSessionStorage.destroySession(userSession)
   );
 
-  // Encode the redirectTo parameter
-  const encodedRedirectTo = encodeURIComponent(redirectTo);
-
   // Redirect to login with the encoded redirectTo query parameter
-  return redirect(`/login?redirectTo=${encodedRedirectTo}`, { headers });
+  return redirect('/', { headers });
 }

@@ -1,4 +1,5 @@
 import { useMatches } from '@remix-run/react';
+import Tags from '~/components/Tags';
 
 export default function Index() {
   const matches = useMatches();
@@ -15,8 +16,11 @@ export default function Index() {
   const user = layoutData?.user;
 
   return (
-    <div className='text-3xl font-bold underline'>
-      {user && <h1 className='text-green-400'>Hello {user.name}</h1>}
+    <div className=''>
+      <Tags/>
+      <h3>Landing Page</h3>
+      
+      {user && <p className='text-primary'>Hello {user.name}</p>}
     </div>
   );
 }

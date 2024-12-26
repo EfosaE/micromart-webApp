@@ -8,8 +8,8 @@ export const authSchema = z.object({
   email: z.string().email(),
   password: z
     .string()
-    .min(6, 'Must contain at least 6 chars')
-    .max(12, 'Must contain 12 chars max'),
+    .min(8, 'Must contain at least 8 chars')
+    .max(48, 'Must contain at most 48 chars'),
 });
 
 export type RegisterAccountAuth = z.infer<typeof authSchema>;
