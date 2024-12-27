@@ -13,8 +13,8 @@ import Footer from '~/components/Footer';
 import Navbar from '~/components/Navbar';
 import { SnackbarProvider } from 'notistack';
 import Header from './components/Header';
-import { getUser } from './services/session.server';
-import { isUser } from './types';
+import { createUserSession, getUser } from './services/session.server';
+import { isUser, isUserWithAccessToken } from './types';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -34,28 +34,32 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const url = new URL(request.url);
-
-  // Define public routes
-  const publicRoutes = ['/login', '/signup', '/'];
-  if (publicRoutes.includes(url.pathname)) {
-    console.log(`Public route: ${url.pathname}`);
-    return null;
+  const currentUrl = new URL(request.url);
+  const redirectTo = currentUrl.pathname + currentUrl.search; // Preserve the path and query parameters
+  console.log('Running root loader...');
+  const response = await getUser(request);
+  if (isUser(response)) {
+    return new Response(JSON.stringify({ user: response }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  if (isUserWithAccessToken(response)) {
+    const { user, accessToken } = response;
+    // Create session with user and token
+    return createUserSession({
+      request,
+      redirectTo,
+      token: accessToken,
+      user: response.user,
+    });
   }
 
-  console.log('Running root loader for protected route');
-  const user = await getUser(request);
-  if (!user) {
-    console.log('No user found, redirecting to login');
-    return redirect(`/login?redirectTo=${encodeURIComponent(url.pathname)}`);
-  }
-
-  return new Response(JSON.stringify({ user }), {
+  return new Response(JSON.stringify({ user: null }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   });
 };
-
 
 export default function App() {
   const location = useLocation();

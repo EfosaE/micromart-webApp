@@ -16,20 +16,31 @@ export type SuccessResponse = {
   success: true;
   data: any;
 };
+
 // type guards
 export function isUser(data: any): data is User {
   return (
     typeof data === 'object' && data !== null && 'id' in data && 'name' in data
   );
 }
-
+export function isUserWithAccessToken(value: any): value is UserWithAccessToken {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof value.user === 'object' &&
+    value.user !== null &&
+    typeof value.user.id === 'string' &&
+    typeof value.user.name === 'string' &&
+    typeof value.accessToken === 'string'
+  );
+}
 
 
 export function isErrorResponse(data: any): data is ErrorResponse {
   return (
-    typeof data === 'object' && 
-    data !== null && 
-    'success' in data && 
+    typeof data === 'object' &&
+    data !== null &&
+    'success' in data &&
     data.success === false &&
     'error' in data &&
     'statusCode' in data &&
@@ -40,14 +51,13 @@ export function isErrorResponse(data: any): data is ErrorResponse {
 
 export function isSuccessResponse(data: any): data is SuccessResponse {
   return (
-    typeof data === 'object' && 
-    data !== null && 
-    'success' in data && 
+    typeof data === 'object' &&
+    data !== null &&
+    'success' in data &&
     data.success === true &&
     'data' in data
   );
 }
-
 
 // Helper function to generate a range of numbers (400-499)
 const generateRange = (start: number, end: number): number[] => {
@@ -56,6 +66,3 @@ const generateRange = (start: number, end: number): number[] => {
 
 // Generate all status codes from 400 to 499
 const errorStatusCodes = generateRange(400, 500);
-
-
-

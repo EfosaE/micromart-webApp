@@ -1,23 +1,18 @@
 import { isAxiosError } from 'axios';
 import { ErrorResponse } from '~/types';
 
-export default function catchAsync(fn: Function) {
-  return async (arg: any) => {
+export default function catchAsync<T>(
+  fn: (...args: any[]) => Promise<T>
+): (...args: any[]) => Promise<T | ErrorResponse> {
+  return async (...args: any[]): Promise<T | ErrorResponse> => {
     try {
-      return await fn(arg);
+      return await fn(...args);
     } catch (error) {
-      
       if (isAxiosError(error)) {
         const status = error.response?.status || 500;
         if (error.code === 'ECONNREFUSED') {
           return errorResponse(
             'Server is having downtime, please try again later',
-            status
-          );
-        }
-        if (error.code === 'ECONNABORTED') {
-          return errorResponse(
-            'Server timed out, please try again later',
             status
           );
         }

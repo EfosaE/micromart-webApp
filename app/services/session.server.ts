@@ -153,11 +153,14 @@ export async function getUser(request: Request) {
 
     // 4. Try refreshing the token if refresh token exists
     if (refresh_token) {
-      const payload = await getNewToken(refresh_token);
-      const token: string = payload.accessToken;
-      const user = payload.user;
-      console.log('token payload', payload);
-      return { user, token };
+      const response = await getNewToken(refresh_token);
+      console.log('getNewToken', response);
+      if (response.success) {
+        const { user, accessToken } = response.data;
+        return { user, accessToken };
+      } else {
+        return null;
+      }
     }
   }
   return null;

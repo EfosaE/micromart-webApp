@@ -1,6 +1,6 @@
 const Banner = () => {
   return (
-    <div className='bg-secondary font-klee text-white py-2'>
+    <div className='bg-secondary font-klee text-white py-2 hidden md:block'>
       <div className='container flex justify-around items-center h-3 '>
         <div className='overflow-hidden w-[200px]'>
           <p className='text-sm whitespace-nowrap animate-marquee'>

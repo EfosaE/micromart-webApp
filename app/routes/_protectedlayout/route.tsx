@@ -1,10 +1,9 @@
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import { createUserSession, getUser } from '~/services/session.server';
-import { isUser, User } from '~/types';
+import { isUser, isUserWithAccessToken, User } from '~/types';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  console.log('protected loader called');
   const currentUrl = new URL(request.url); // Get the current URL
   const redirectTo = currentUrl.pathname + currentUrl.search; // Preserve the path and query parameters
 
@@ -14,16 +13,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const encodedRedirectTo = encodeURIComponent(redirectTo);
 
     // Redirect to login with the encoded redirectTo query parameter
-    return redirect(`/login?redirectTo=${encodedRedirectTo}`);
+    throw redirect(`/login?redirectTo=${encodedRedirectTo}`);
   }
-  if ('token' in response) {
-    const { user, token } = response;
+  if (isUserWithAccessToken(response)) {
     // Create session with user and token
     return createUserSession({
       request,
       redirectTo,
-      token,
-      user,
+      token: response.accessToken,
+      user: response.user,
     });
   }
   if (isUser(response)) {
