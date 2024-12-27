@@ -54,7 +54,7 @@ app.use(cookieParser());
 // app.use(getCookiesMiddleware);
 
 // express endpoint for remix to understand(call it in your remix app)
-app.post('/api/refresh', async (req, res) => {
+app.get('/api/refresh', async (req, res) => {
   try {
     const response = await axios.get(
       `${process.env.NEST_API_URL}/api/v1/auth/refresh`,
