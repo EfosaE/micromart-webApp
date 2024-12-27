@@ -42,7 +42,8 @@ export const getUserProfile = catchAsync<SuccessResponse>(
 
 export const getNewToken = catchAsync<SuccessResponse>(
   async (refreshToken: string): Promise<SuccessResponse> => {
-    const response = await axios.get(
+    console.log('refreshToken',refreshToken)
+    const response = await axios.post(
       `${process.env.REMIX_APP_URL}/api/refresh`,
       {
         headers: {

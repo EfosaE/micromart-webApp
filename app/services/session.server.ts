@@ -159,7 +159,7 @@ export async function getUser(request: Request) {
         return { user, accessToken };
       } else {
         return null;
-      }
+      }         
     }
   }
   return null;
