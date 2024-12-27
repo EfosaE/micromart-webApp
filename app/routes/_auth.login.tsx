@@ -21,7 +21,7 @@ import { authSchemaWithoutName } from '~/utils/validation';
 import { parseCookie } from '~/utils/cookieUtils';
 import { createAuthCookie } from '~/services/cookies.server';
 import { createUserSession } from '~/services/session.server';
-import { User } from '~/types';
+import { isErrorResponse, User } from '~/types';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -73,7 +73,7 @@ export async function action({ request }: ActionFunctionArgs) {
             user,
           });
         } // else (no-cookies are sent with the response),
-      } else if (!result.success) {
+      } else if (isErrorResponse(result)) {
         // Failure: Return the error message to be displayed on the client
         return new Response(JSON.stringify({ loginError: result.error }), {
           status: result.statusCode,
@@ -114,15 +114,15 @@ export default function LoginForm() {
     setShowPassword((prev) => !prev);
   };
 
- useEffect(() => {
-   if (loaderData.successMessage) {
-     enqueueSnackbar(loaderData.successMessage, {
-       variant: 'success',
-       preventDuplicate: true,
-     });
-   }
- }, [loaderData]);
-  
+  useEffect(() => {
+    if (loaderData.successMessage) {
+      enqueueSnackbar(loaderData.successMessage, {
+        variant: 'success',
+        preventDuplicate: true,
+      });
+    }
+  }, [loaderData]);
+
   useEffect(() => {
     if (actionData?.loginError) {
       if (Array.isArray(actionData.loginError)) {

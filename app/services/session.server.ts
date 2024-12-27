@@ -12,6 +12,7 @@ import {
   ErrorResponse,
   isSuccessResponse,
   isErrorResponse,
+  isUserWithAccessToken,
 } from '~/types';
 
 invariant(process.env.USER_SESSION_SECRET, 'USER_SESSION_SECRET must be set');
@@ -154,12 +155,12 @@ export async function getUser(request: Request) {
     if (refresh_token) {
       const response = await getNewToken(refresh_token);
       console.log('getNewToken', response);
-      if (response.success) {
-        const { user, accessToken } = response.data;
+      if (isUserWithAccessToken(response)) {
+        const { user, accessToken } = response;
         return { user, accessToken };
       } else {
         return null;
-      }         
+      }
     }
   }
   return null;

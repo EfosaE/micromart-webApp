@@ -1,6 +1,6 @@
 import { GetUserByEmailAuth, RegisterAccountAuth } from '~/utils/validation';
 import { axiosInstance } from './axios.server';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { SuccessResponse, UserWithAccessToken } from '~/types';
 import catchAsync from '~/utils/catchAsync';
 
@@ -40,24 +40,25 @@ export const getUserProfile = catchAsync<SuccessResponse>(
   }
 );
 
-export const getNewToken = catchAsync<SuccessResponse>(
-  async (refreshToken: string): Promise<SuccessResponse> => {
-    console.log('refreshToken',refreshToken)
+export const getNewToken = async (refreshToken: string) => {
+  try {
+    // Send a GET request to your API with cookies included in the header
     const response = await axios.get(
       `${process.env.REMIX_APP_URL}/api/refresh`,
       {
         headers: {
-          Cookie: `refresh_token=${refreshToken}`,
+          Cookie: `refresh_token=${refreshToken}`, // Attach the refreshToken as a cookie
         },
-        withCredentials: true,
+        withCredentials: true, // This ensures cookies are sent with the request... Nah
       }
     );
-
-    console.log('response_Token', response.data);
+    console.log('get token called!!!', response.data);
     const newUserData: UserWithAccessToken = response.data;
-    return {
-      success: true,
-      data: newUserData,
-    };
+    return newUserData;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      console.log(error.response);
+    }
+    console.log(error)
   }
-);
+};

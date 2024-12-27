@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { safeRedirect } from '~/utils/safeRedirect';
 import { signUpUser } from '~/services/api/auth.api';
 import { useSnackbar } from 'notistack';
+import { isErrorResponse } from '~/types';
 
 export const meta: MetaFunction = () => [{ title: 'Sign Up' }]; // this causes remix to behave a weird way in dev
 
@@ -42,7 +43,7 @@ export async function action({ request }: ActionFunctionArgs) {
             redirectTo
           )}&successMessage=${successMessage}`
         );
-      } else if (!result.success) {
+      } else if (isErrorResponse(result)) {
         console.log(result);
         // Failure: Return the error message to be displayed on the client
         return new Response(JSON.stringify({ signUpError: result.error }), {
