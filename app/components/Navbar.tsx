@@ -14,7 +14,7 @@ const Navbar = ({ user }: NavbarProps) => {
   console.log(user)
   return (
     <nav className='py-4'>
-      <div className='container flex md:flex-col flex-row gap-4 items-center justify-between'>
+      <div className='container flex flex-col md:flex-row gap-4 items-center justify-between'>
         <div className='flex items-center gap-2'>
           <img src={logo} alt='Micromart Logo' className='size-10' />
           <h2 className='text-primary'>MicroMart</h2>
