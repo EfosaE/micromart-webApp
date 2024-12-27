@@ -55,33 +55,7 @@ app.use(cookieParser());
 
 // express endpoint for remix to understand(call it in your remix app)
 app.get('/api/refresh', async (req, res) => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEST_API_URL}/api/v1/auth/refresh`,
-      {
-        headers: {
-          Cookie: req.headers.cookie, // Forward cookies to NestJS
-        },
-        withCredentials: true,
-      }
-    );
-    console.log('responseFromNestJS', response.data);
-    // Pass the response back to Remix
-    return res.status(response.status).json(response.data);
-  } catch (error) {
-    if (isAxiosError) {
-      // Connection error (e.g., ECONNREFUSED)
-      if (error.code === 'ECONNREFUSED') {
-        return res.status(500).json({ error: 'Internal server error' });
-      }
-      // The response property contains details about the response, including the status and error message
-      // console.error('Response error data:', error.response.data);
-      // console.error('Response status:', error.response.status);
-      return res
-        .status(error.response.status || 500)
-        .json({ error: 'Failed to refresh tokens' });
-    }
-  }
+
 });
 
 const build = viteDevServer

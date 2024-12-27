@@ -41,11 +41,11 @@ export const getUserProfile = catchAsync<SuccessResponse>(
 );
 
 export const getNewToken = async (refreshToken: string) => {
-   console.log('get token called!!', refreshToken);
+  console.log('get token called!!', refreshToken);
+
   try {
-    // Send a GET request to your API with cookies included in the header
     const response = await axios.get(
-      `${process.env.REMIX_APP_URL}/api/refresh`,
+      `${process.env.NEST_API_URL}/api/v1/auth/refresh`,
       {
         headers: {
           Cookie: `refresh_token=${refreshToken}`, // Attach the refreshToken as a cookie
@@ -58,8 +58,8 @@ export const getNewToken = async (refreshToken: string) => {
     return newUserData;
   } catch (error) {
     if (isAxiosError(error)) {
-      console.log(error.response);
+      console.log(error);
     }
-    console.log(error)
+    console.log(error);
   }
 };
