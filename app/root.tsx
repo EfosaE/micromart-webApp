@@ -36,22 +36,11 @@ export const links: LinksFunction = () => [
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUrl = new URL(request.url);
   const redirectTo = currentUrl.pathname + currentUrl.search; // Preserve the path and query parameters
-  console.log('Running root loader...');
   const response = await getUser(request);
   if (isUser(response)) {
     return new Response(JSON.stringify({ user: response }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
-    });
-  }
-  if (isUserWithAccessToken(response)) {
-    const { user, accessToken } = response;
-    // Create session with user and token
-    return createUserSession({
-      request,
-      redirectTo,
-      token: accessToken,
-      user: response.user,
     });
   }
 
