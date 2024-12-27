@@ -43,16 +43,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
      headers: { 'Content-Type': 'application/json' },
    });
  }
- if (isUserWithAccessToken(response)) {
-   const { user, accessToken } = response;
-   // Create session with user and token
-   return createUserSession({
-     request,
-     redirectTo,
-     token: accessToken,
-     user: response.user,
-   });
- }
+  
+//  if (isUserWithAccessToken(response)) {
+//    const { user, accessToken } = response;
+//    // Create session with user and token
+//    return createUserSession({
+//      request,
+//      redirectTo,
+//      token: accessToken,
+//      user: response.user,
+//    });
+//  }
 
  return new Response(JSON.stringify({ user: null }), {
    status: 200,

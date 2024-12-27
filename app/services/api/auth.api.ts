@@ -41,6 +41,7 @@ export const getUserProfile = catchAsync<SuccessResponse>(
 );
 
 export const getNewToken = async (refreshToken: string) => {
+   console.log('get token called!!', refreshToken);
   try {
     // Send a GET request to your API with cookies included in the header
     const response = await axios.get(
