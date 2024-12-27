@@ -8,6 +8,7 @@ export default function catchAsync<T>(
     try {
       return await fn(...args);
     } catch (error) {
+      console.log(error)
       if (isAxiosError(error)) {
         const status = error.response?.status || 500;
         if (error.code === 'ECONNREFUSED') {
