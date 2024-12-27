@@ -150,7 +150,6 @@ export async function getUser(request: Request) {
     const cookiesHeader = request.headers.get('cookie');
     const refreshTokenCookie = createCookie('refresh_token');
     const refresh_token = await refreshTokenCookie.parse(cookiesHeader);
-
     // 4. Try refreshing the token if refresh token exists
     if (refresh_token) {
       const response = await getNewToken(refresh_token);
