@@ -167,9 +167,14 @@ export async function getUser(request: Request) {
 }
 
 export async function logout(request: Request) {
+  const refreshTokenCookie = createCookie('refresh_token');
+
   const authSession = await getAuthSession(request);
   const userSession = await getUserSession(request);
-
+  // Create a deletion header
+  const deleteCookieHeader = await refreshTokenCookie.serialize('', {
+    expires: new Date(0), // Expire immediately
+  });
   const headers = new Headers();
 
   // Append both Set-Cookie headers
@@ -181,6 +186,7 @@ export async function logout(request: Request) {
     'Set-Cookie',
     await userSessionStorage.destroySession(userSession)
   );
+  headers.append('Set-Cookie', deleteCookieHeader);
 
   // Redirect to login with the encoded redirectTo query parameter
   return redirect('/', { headers });

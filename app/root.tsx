@@ -7,7 +7,7 @@ import {
   useLocation,
   useMatches,
 } from '@remix-run/react';
-
+import { SpeedInsights } from '@vercel/speed-insights/remix';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import stylesheet from '~/tailwind.css?url';
 import Footer from '~/components/Footer';
@@ -95,7 +95,7 @@ export default function App() {
           <Outlet />
         </SnackbarProvider>
         {!isAuthPage && <Footer />}
-
+        <SpeedInsights />
         <Scripts />
       </body>
     </html>

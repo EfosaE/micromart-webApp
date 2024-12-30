@@ -20,6 +20,7 @@
     "@remix-run/node": "^2.15.1",
     "@remix-run/react": "^2.15.1",
     "@vercel/remix": "^2.15.1",
+    "@vercel/speed-insights": "^1.1.0",
     "axios": "^1.7.9",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

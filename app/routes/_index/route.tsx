@@ -1,5 +1,6 @@
 import { useMatches } from '@remix-run/react';
-import Tags from '~/components/Tags';
+
+
 export let handle = {
   breadcrumb: () => 'Home',
 };
@@ -20,7 +21,6 @@ export default function Index() {
 
   return (
     <div className=''>
-      <Tags />
       <h3>Landing Page</h3>
 
       {user && <p className='text-primary'>Hello {user.name}</p>}

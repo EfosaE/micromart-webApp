@@ -2,6 +2,7 @@ import { useMatches } from '@remix-run/react';
 import Banner from './Banner';
 import Navbar from './Navbar';
 import { User } from '~/types';
+import Tags from './Tags';
 
 const Header = () => {
   const matches = useMatches();
@@ -17,6 +18,7 @@ const Header = () => {
     <header>
       {/* <Banner /> */}
       <Navbar user={user} />
+      <Tags />
     </header>
   );
 };

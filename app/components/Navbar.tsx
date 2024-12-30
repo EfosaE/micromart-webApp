@@ -4,6 +4,7 @@ import UserIcon from './icons/UserIcon';
 import SearchIcon from './icons/SearchIcon';
 import CartIcon from './icons/CartIcon';
 import { User } from '~/types';
+import MenuComp from './Menu';
 
 interface NavbarProps {
   /* list of props */
@@ -11,7 +12,7 @@ interface NavbarProps {
 }
 
 const Navbar = ({ user }: NavbarProps) => {
-  console.log(user)
+  console.log(user);
   return (
     <nav className='py-4'>
       <div className='container flex flex-col lg:flex-row gap-4 items-center justify-between'>
@@ -35,9 +36,7 @@ const Navbar = ({ user }: NavbarProps) => {
           <div className='flex items-center'>
             <UserIcon className='text-secondary cursor-pointer hover:text-primary size-6' />
             {user ? (
-              <p>
-                Welcome, <span className='text-tertiary'>{user.name}!</span>
-              </p>
+              <MenuComp user={user} />
             ) : (
               <Link to={'/login'} className='text-sm hover:text-slate-500'>
                 Sign In/Sign Up
