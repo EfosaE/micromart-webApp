@@ -4,8 +4,14 @@ export default {
   content: ['./app/**/*.{js,jsx,ts,tsx}'],
   theme: {
     container: {
-      padding: '2rem',
-      center: true,
+      center: true, // Centers the container
+      padding: {
+        DEFAULT: '.5rem', // Default padding for all screen sizes
+        sm: '1rem', // Padding for small screens
+        md: '2rem', // Padding for medium screens
+        lg: '4rem', // Padding for large screens
+        xl: '6rem', // Padding for extra-large screens
+      },
     },
 
     extend: {

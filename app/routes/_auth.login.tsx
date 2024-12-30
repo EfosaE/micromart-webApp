@@ -48,7 +48,6 @@ export async function action({ request }: ActionFunctionArgs) {
     // Use zod to validate the form data
     authSchemaWithoutName.parse({ email, password });
     if (email && password) {
-      // call your signIn endpoint
 
       const result = await loginUser({ email, password });
       if (result.success && result.headers) {

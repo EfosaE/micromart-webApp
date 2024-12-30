@@ -42,15 +42,6 @@ const GlobalLayout = () => {
 
   return (
     <main className='container'>
-      <div>
-        {user ? (
-          <p>
-            Welcome, <span className='text-tertiary'>{user.name}!</span>
-          </p>
-        ) : (
-          <p className='text-red-500'>{error || 'Unable to load profile.'}</p>
-        )}
-      </div>
       <Outlet />
     </main>
   );

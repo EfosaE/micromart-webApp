@@ -37,6 +37,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUrl = new URL(request.url);
   const redirectTo = currentUrl.pathname + currentUrl.search; // Preserve the path and query parameters
   const response = await getUser(request);
+  console.log('root loader ran')
  if (isUser(response)) {
    return new Response(JSON.stringify({ user: response }), {
      status: 200,

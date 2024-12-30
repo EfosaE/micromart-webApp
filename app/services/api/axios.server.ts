@@ -1,12 +1,40 @@
-import axios from 'axios';
 import invariant from 'tiny-invariant';
-
 
 invariant(process.env.NEST_API_URL, 'No Base URL found FOR NEST');
 invariant(process.env.REMIX_APP_URL, 'No Base URL found FOR REMIX');
 console.log('Base URL:', process.env.NEST_API_URL);
 
 // Create an axios base instance
+
+import axios, { AxiosRequestConfig } from 'axios';
+
+export const axiosAuthWrapper = async (
+  accessToken: string,
+  url: string,
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  data?: any, // Optional payload for POST, PUT, DELETE requests
+  headers?: Record<string, string>
+) => {
+  const axiosInstance = axios.create({
+    baseURL: process.env.NEST_API_URL, // Your NestJS backend URL
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    withCredentials: true, // Send cookies along
+  });
+
+  // Make the request using the configured axios instance
+  const config: AxiosRequestConfig = {
+    url,
+    method,
+    data, // Include data if provided
+  };
+
+  return axiosInstance.request(config); // Return the Axios Promise
+};
+
 export const axiosInstance = axios.create({
   baseURL: process.env.NEST_API_URL, //  NestJS backend URL
   // timeout: 10000, no timeout
@@ -15,7 +43,6 @@ export const axiosInstance = axios.create({
   },
   withCredentials: true, // send cookies along
 });
-
 
 // // Interceptor to check response headers
 // axiosInstance.interceptors.response.use(

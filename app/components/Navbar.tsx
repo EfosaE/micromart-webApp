@@ -33,7 +33,7 @@ const Navbar = ({ user }: NavbarProps) => {
 
         <div className='flex items-center gap-2'>
           <div className='flex items-center'>
-            <UserIcon className='text-secondary cursor-pointer hover:text-primary' />
+            <UserIcon className='text-secondary cursor-pointer hover:text-primary size-6' />
             {user ? (
               <p>
                 Welcome, <span className='text-tertiary'>{user.name}!</span>

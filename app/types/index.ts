@@ -66,3 +66,10 @@ const generateRange = (start: number, end: number): number[] => {
 
 // Generate all status codes from 400 to 499
 const errorStatusCodes = generateRange(400, 500);
+
+
+export enum Role {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+  SELLER = 'SELLER',
+}

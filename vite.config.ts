@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import { vercelPreset } from '@vercel/remix/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+
 export default defineConfig({
   plugins: [
     remix({
@@ -12,7 +13,12 @@ export default defineConfig({
         v3_relativeSplatPath: true,
         v3_throwAbortReason: true,
       },
+     
     }),
-    tsconfigPaths(), // Add this to enable path alias resolution
+    tsconfigPaths(), // Enable path aliases as per tsconfig.json
   ],
 });
+//  ignoredRouteFiles: ['**/*'], // Ensures Remix's default routing is ignored
+//       routes(defineRoutes) {
+//         return flatRoutes('flatroutes', defineRoutes); // Use flatRoutes for dynamic routing
+//       },

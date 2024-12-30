@@ -17,9 +17,9 @@ export default function Index() {
 
   return (
     <div className=''>
-      <Tags/>
+      <Tags />
       <h3>Landing Page</h3>
-      
+
       {user && <p className='text-primary'>Hello {user.name}</p>}
     </div>
   );

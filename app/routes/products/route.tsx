@@ -1,5 +1,7 @@
-import { useFetcher } from '@remix-run/react';
+import { Outlet, useFetcher } from '@remix-run/react';
 import { useState } from 'react';
+
+
 
 const Products = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -12,10 +14,10 @@ const Products = () => {
   };
 
   return (
-    <div>
+    <div className='container'>
       <p>Products</p>
 
-      <fetcher.Form
+      {/* <fetcher.Form
         method='post'
         action='/create-product'
         encType='multipart/form-data'>
@@ -25,7 +27,7 @@ const Products = () => {
           id='file'
           name='file'
           accept='image/*'
-          required
+          // required
           onChange={handleFileChange}
         />
 
@@ -41,10 +43,11 @@ const Products = () => {
 
       {file && <p>Selected file: {file.name}</p>}
 
-
       {fetcher.state === 'submitting' && (
         <p className='text-blue-500'>Uploading...</p>
-      )}
+      )} */}
+
+      <Outlet />
     </div>
   );
 };

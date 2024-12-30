@@ -20,7 +20,7 @@ export function Input({
     <div className='space-y-2'>
       <label
         htmlFor={name}
-        className='block text-sm font-medium text-gray-700 capitalize'>
+        className='block text-base font-medium text-gray-700 capitalize'>
         {label}
       </label>
       {name === 'password' ? (

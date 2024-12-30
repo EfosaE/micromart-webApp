@@ -1,5 +1,5 @@
 import { GetUserByEmailAuth, RegisterAccountAuth } from '~/utils/validation';
-import { axiosInstance } from './axios.server';
+import { axiosAuthWrapper, axiosInstance } from './axios.server';
 import axios, { isAxiosError } from 'axios';
 import { SuccessResponse, UserWithAccessToken } from '~/types';
 import catchAsync from '~/utils/catchAsync';
@@ -24,21 +24,23 @@ export const loginUser = catchAsync(async (userData: GetUserByEmailAuth) => {
   };
 });
 
-export const getUserProfile = catchAsync<SuccessResponse>(
+export const getUserProfile = catchAsync<SuccessResponse , [string]>(
   async (access_token: string): Promise<SuccessResponse> => {
     console.log('BE called !!!');
 
-    const response = await axiosInstance.get('/api/v1/auth/profile', {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
+    const response = await axiosAuthWrapper(
+      access_token,
+      '/api/v1/auth/profile',
+      'GET'
+    );
+
     return {
       success: true,
       data: response.data,
     };
   }
 );
+
 
 export const getNewToken = async (refreshToken: string) => {
   console.log('get token called!!', refreshToken);

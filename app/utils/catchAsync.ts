@@ -1,14 +1,15 @@
 import { isAxiosError } from 'axios';
 import { ErrorResponse } from '~/types';
 
-export default function catchAsync<T>(
-  fn: (...args: any[]) => Promise<T>
-): (...args: any[]) => Promise<T | ErrorResponse> {
-  return async (...args: any[]): Promise<T | ErrorResponse> => {
+
+export default function catchAsync<T, A extends any[]>(
+  fn: (...args: A) => Promise<T>
+): (...args: A) => Promise<T | ErrorResponse> {
+  return async (...args: A): Promise<T | ErrorResponse> => {
     try {
       return await fn(...args);
     } catch (error) {
-      console.log(error)
+      // console.log(error);
       if (isAxiosError(error)) {
         const status = error.response?.status || 500;
         if (error.code === 'ECONNREFUSED') {

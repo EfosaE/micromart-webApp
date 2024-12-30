@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SearchIcon = ({ className }: { className?: string }) => {
+const SearchIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -8,7 +8,7 @@ const SearchIcon = ({ className }: { className?: string }) => {
       viewBox='0 0 24 24'
       strokeWidth={1.5}
       stroke='currentColor'
-      className={`size-6 ${className || ''}`}>
+      {...props}>
       <path
         strokeLinecap='round'
         strokeLinejoin='round'

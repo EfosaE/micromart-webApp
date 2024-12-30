@@ -8,6 +8,16 @@ export interface ProductTags {
   DemographicTags: string[];
   MaterialQualityTags: string[];
 }
+export enum TagTypes {
+  GeneralProductTags = 'GeneralProductTags',
+  CategoryBasedTags = 'CategoryBasedTags',
+  ConditionBasedTags = 'ConditionBasedTags',
+  SeasonalTags = 'SeasonalTags',
+  PriceBasedTags = 'PriceBasedTags',
+  UsageBasedTags = 'UsageBasedTags',
+  DemographicTags = 'DemographicTags',
+  MaterialQualityTags = 'MaterialQualityTags',
+}
 
 export const productTags = {
   GeneralProductTags: [
