@@ -15,7 +15,7 @@ const Header = () => {
   const user = layoutData?.user;
   return (
     <header>
-      <Banner />
+      {/* <Banner /> */}
       <Navbar user={user} />
     </header>
   );

@@ -1,7 +1,8 @@
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
+import { Link, Outlet, useLoaderData } from '@remix-run/react';
 import { createUserSession, getUser } from '~/services/session.server';
 import { isUser, isUserWithAccessToken, User } from '~/types';
+
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUrl = new URL(request.url); // Get the current URL

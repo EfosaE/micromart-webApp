@@ -1,6 +1,14 @@
 import { ActionFunctionArgs } from '@remix-run/node';
 import { axiosAuthWrapper, axiosInstance } from '~/services/api/axios.server';
 
+// export const handle = {
+//   breadcrumb: () => <Link to='/parent/child'>Child Route</Link>,
+// };
+
+export let handle = {
+  breadcrumb: () => 'Create-Product',
+};
+
 export async function action({ request }: ActionFunctionArgs) {
   const accessToken = await getAccessToken(request);
   const originalFormData = await request.formData();
@@ -55,7 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
     if (isSuccessResponse(response)) {
       console.log(response);
     }
-    
+
     return new Response(JSON.stringify({ message: 'Upload successful' }), {
       status: 200, // HTTP status
       headers: {
@@ -79,7 +87,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 }
 
-import { Form, useActionData } from '@remix-run/react';
+import { Form, Link, useActionData } from '@remix-run/react';
 import { Input } from '~/components/Input';
 import { Button } from '~/components/Button';
 import { useEffect, useState } from 'react';

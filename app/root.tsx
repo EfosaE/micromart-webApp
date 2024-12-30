@@ -5,6 +5,7 @@ import {
   redirect,
   Scripts,
   useLocation,
+  useMatches,
 } from '@remix-run/react';
 
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
@@ -15,6 +16,7 @@ import { SnackbarProvider } from 'notistack';
 import Header from './components/Header';
 import { createUserSession, getUser } from './services/session.server';
 import { isUser, isUserWithAccessToken } from './types';
+import Breadcrumbs from './components/Breadcrumbs';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -63,6 +65,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
+   const matches = useMatches();
   const location = useLocation();
 
   // Check if the current route is one of the authentication routes
@@ -82,6 +85,7 @@ export default function App() {
       </head>
       <body className='font-space'>
         {!isAuthPage && <Header />}
+        <Breadcrumbs />
         <SnackbarProvider
           maxSnack={3} // Number of toasts visible at a time
           anchorOrigin={{
