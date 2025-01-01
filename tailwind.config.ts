@@ -8,9 +8,9 @@ export default {
       padding: {
         DEFAULT: '.5rem', // Default padding for all screen sizes
         sm: '1rem', // Padding for small screens
-        md: '2rem', // Padding for medium screens
-        lg: '4rem', // Padding for large screens
-        xl: '6rem', // Padding for extra-large screens
+        md: '1rem', // Padding for medium screens
+        lg: '2rem', // Padding for large screens
+        xl: '3rem', // Padding for extra-large screens
       },
     },
 

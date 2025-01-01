@@ -1,9 +1,7 @@
 import { useMatches } from '@remix-run/react';
 
 
-export let handle = {
-  breadcrumb: () => 'Home',
-};
+
 
 export default function Index() {
   const matches = useMatches();

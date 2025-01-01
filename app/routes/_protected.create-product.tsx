@@ -40,7 +40,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // Append non-file fields to FormData
   for (const [key, value] of Object.entries(zodFormObject)) {
-    requestFormData.append(key, value);
+    // Serialize tags to string before appending
+    if (key === 'tags') {
+      requestFormData.append(key, JSON.stringify(value)); // Stringify the tags array
+    } else {
+      requestFormData.append(key, value);
+    }
   }
 
   // Append the image file to FormData
@@ -59,17 +64,28 @@ export async function action({ request }: ActionFunctionArgs) {
     });
     if (isErrorResponse(response)) {
       console.log(response);
+      return new Response(JSON.stringify({ errorMessage: 'Upload Failed' }), {
+        status: response.statusCode || 500, // HTTP status
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
     if (isSuccessResponse(response)) {
+      const { data } = response;
       console.log(response);
+      return new Response(
+        JSON.stringify({
+          successMessage: `Upload successful for ${data.name} Product ID:${data.id}`,
+        }),
+        {
+          status: 201, // HTTP status
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
     }
-
-    return new Response(JSON.stringify({ message: 'Upload successful' }), {
-      status: 200, // HTTP status
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
   } catch (error) {
     // If validation fails, format the errors for the UI
     if (error instanceof ZodError) {
@@ -87,7 +103,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 }
 
-import { Form, Link, useActionData } from '@remix-run/react';
+import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 import { Input } from '~/components/Input';
 import { Button } from '~/components/Button';
 import { useEffect, useState } from 'react';
@@ -97,18 +113,27 @@ import { getAccessToken } from '~/services/session.server';
 import { createProduct } from '~/services/api/product.api';
 import { isErrorResponse, isSuccessResponse } from '~/types';
 import { productSchema } from '~/utils/validation';
+import { TagTypes } from '~/data';
+import { enqueueSnackbar } from 'notistack';
 
 export default function CreateProduct() {
   const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === 'submitting';
   const [isUrl, setIsUrl] = useState(true); // State to track if the user wants to use URL or upload a file
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<{ name: string; tagType: TagTypes }[]>([]);
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target);
     setIsUrl(event.target.value === 'URL');
   };
 
   useEffect(() => {
-    console.log(actionData);
+    if (actionData?.successMessage) {
+      enqueueSnackbar(actionData.successMessage, { variant: 'success' });
+    }
+    if (actionData?.errorMessage) {
+      enqueueSnackbar(actionData.errorMessage, { variant: 'error' });
+    }
   }, [actionData]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,7 +183,7 @@ export default function CreateProduct() {
         id='description'
         name='description'
         placeholder='Enter a description of the product'
-        className={`border  focus:ring-1 focus:outline-none focus:ring-secondary focus:border-secondary block p-2.5  border rounded  ${
+        className={`border  focus:ring-1 focus:outline-none focus:ring-secondary focus:border-secondary block p-2.5 rounded  ${
           actionData?.errors?.description
             ? 'border-red-500 focus:ring-red-500'
             : 'border-gray-500'
@@ -226,7 +251,7 @@ export default function CreateProduct() {
       )}
       <Button
         label={'Create'}
-        className='text-white bg-secondary p-3 w-fit rounded mt-4'></Button>
+        className='text-white bg-secondary p-3 w-fit rounded mt-4' disabled={isSubmitting}></Button>
     </Form>
   );
 }

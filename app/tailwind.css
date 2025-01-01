@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 *{
   margin: 0;
   padding: 0;
@@ -28,3 +29,8 @@
   border-radius: 8px !important;
 }
 
+
+
+ .btn-green {
+    @apply text-white bg-green-500 hover:bg-green-700 px-1 py-0.5;
+  }

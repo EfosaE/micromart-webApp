@@ -17,7 +17,9 @@ import Header from './components/Header';
 import { createUserSession, getUser } from './services/session.server';
 import { isUser, isUserWithAccessToken } from './types';
 import Breadcrumbs from './components/Breadcrumbs';
-
+export let handle = {
+  breadcrumb: () => 'Home',
+};
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
   {
@@ -70,7 +72,9 @@ export default function App() {
 
   // Check if the current route is one of the authentication routes
   const isAuthPage =
-    location.pathname === '/login' || location.pathname === '/register';
+    location.pathname === '/login' ||
+    location.pathname === '/register' ||
+    location.pathname === '/create-product';
 
   return (
     <html>
@@ -83,7 +87,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className='font-space'>
+      <body className=''>
         {!isAuthPage && <Header />}
         <Breadcrumbs />
         <SnackbarProvider

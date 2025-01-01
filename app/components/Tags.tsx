@@ -2,7 +2,7 @@ import { ProductTags, productTags } from '~/data';
 
 const Tags = () => {
   return (
-    <div className='flex overflow-x-auto space-x-2'>
+    <div className='flex overflow-x-auto space-x-2 container'>
       {Object.entries(productTags)
         .filter(
           ([category]) =>
@@ -25,26 +25,3 @@ const Tags = () => {
 };
 
 export default Tags;
-
-// const Tags = () => {
-//   return (
-//     <div className='p-4'>
-//       {Object.entries(productTags).map(([category, tags]) => (
-//         <div key={category} className='mb-6'>
-//           <h3 className='text-lg font-semibold'>
-//             {category.replace(/([A-Z])/g, ' $1')}
-//           </h3>
-//           <ul className='list-disc pl-6'>
-//             {(tags as ProductTags[keyof ProductTags]).map((tag) => (
-//               <li key={tag} className='text-gray-700'>
-//                 {tag}
-//               </li>
-//             ))}
-//           </ul>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// export default Tags;

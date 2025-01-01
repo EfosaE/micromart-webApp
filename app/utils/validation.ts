@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TagTypes } from '~/data';
 
 export const authSchema = z.object({
   name: z
@@ -20,6 +21,13 @@ export type GetUserByEmailAuth = z.infer<typeof authSchemaWithoutName>;
 
 // Base Product Schema
 const ImgTypeEnum = z.enum(['URL', 'FILE']); 
+
+// Define the schema for each tag
+const TagSchema = z.object({
+  name: z.string().min(1, 'Tag name cannot be empty'),
+  tagType: z.nativeEnum(TagTypes), // Use the existing TagTypes enum with z.nativeEnum
+});
+
 export const productSchema = z.object({
   name: z
     .string()
@@ -34,10 +42,9 @@ export const productSchema = z.object({
     .positive('Qunatity must be greater than zero')
     .int('Quantity must be an integer')
     .nonnegative('Quantity cannot be negative'),
-  tags: z
-    .array(z.string().min(1, 'Tags cannot be empty')) // Ensure no empty strings in the array
-    .min(1, 'Choose atleast one tag') // Ensure the array is not empty
-    .max(10, 'Cannot have more than 10 tags'),
+  tags: z.array(TagSchema)
+  .min(1, 'Choose at least one tag')
+  .max(10, 'Cannot have more than 10 tags'),
   description: z
     .string()
     .min(10, 'Description must contain at least 10 characters')

@@ -7,6 +7,7 @@ export interface ProductTags {
   UsageBasedTags: string[];
   DemographicTags: string[];
   MaterialQualityTags: string[];
+  Others: string[];
 }
 export enum TagTypes {
   GeneralProductTags = 'GeneralProductTags',
@@ -17,6 +18,7 @@ export enum TagTypes {
   UsageBasedTags = 'UsageBasedTags',
   DemographicTags = 'DemographicTags',
   MaterialQualityTags = 'MaterialQualityTags',
+  Others = 'Others',
 }
 
 export const productTags = {
@@ -66,7 +68,6 @@ export const productTags = {
   PriceBasedTags: [
     'Budget-Friendly',
     'Premium',
-    'Under $10',
     'Luxury',
     'Discounted',
     'Free Shipping',
@@ -99,4 +100,5 @@ export const productTags = {
     'Waterproof',
     'BPA-Free',
   ],
+  Others: [],
 };

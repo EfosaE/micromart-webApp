@@ -22,7 +22,7 @@ export default function Breadcrumbs() {
     });
 
   return (
-    <nav aria-label='breadcrumb' className='container'>
+    <nav aria-label='breadcrumb' className='container py-2'>
       <ol className='flex space-x-2'>
         {breadcrumbs.map((crumb, index) => (
           <li key={index}>
