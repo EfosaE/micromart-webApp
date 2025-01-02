@@ -1,4 +1,5 @@
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
@@ -6,6 +7,7 @@ import {
   Scripts,
   useLocation,
   useMatches,
+  useRouteError,
 } from '@remix-run/react';
 import { SpeedInsights } from '@vercel/speed-insights/remix';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
@@ -17,7 +19,7 @@ import Header from './components/Header';
 import { createUserSession, getUser } from './services/session.server';
 import { isUser, isUserWithAccessToken } from './types';
 import Breadcrumbs from './components/Breadcrumbs';
-
+import { AppButton } from './components/Button';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -40,33 +42,33 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUrl = new URL(request.url);
   const redirectTo = currentUrl.pathname + currentUrl.search; // Preserve the path and query parameters
   const response = await getUser(request);
-  console.log('root loader ran')
- if (isUser(response)) {
-   return new Response(JSON.stringify({ user: response }), {
-     status: 200,
-     headers: { 'Content-Type': 'application/json' },
-   });
- }
-  
- if (isUserWithAccessToken(response)) {
-   const { user, accessToken } = response;
-   // Create session with user and token
-   return createUserSession({
-     request,
-     redirectTo,
-     token: accessToken,
-     user: response.user,
-   });
- }
+  console.log('root loader ran');
+  if (isUser(response)) {
+    return new Response(JSON.stringify({ user: response }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
- return new Response(JSON.stringify({ user: null }), {
-   status: 200,
-   headers: { 'Content-Type': 'application/json' },
- });
+  if (isUserWithAccessToken(response)) {
+    const { user, accessToken } = response;
+    // Create session with user and token
+    return createUserSession({
+      request,
+      redirectTo,
+      token: accessToken,
+      user: response.user,
+    });
+  }
+
+  return new Response(JSON.stringify({ user: null }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
 };
 
 export default function App() {
-   const matches = useMatches();
+  const matches = useMatches();
   const location = useLocation();
 
   // Check if the current route is one of the authentication routes
@@ -105,23 +107,47 @@ export default function App() {
   );
 }
 
-// export function ErrorBoundary() {
-//   const error = useRouteError();
+export function ErrorBoundary() {
+  const error = useRouteError();
+  console.error(error);
+  let errorMessage = 'An unexpected error occurred. Please try again later.';
+  let statusCode = 500;
 
-//   if (isRouteErrorResponse(error)) {
-//     return (
-//       <div>
-//         <h1>
-//           {error.status} {error.statusText}
-//         </h1>
-//         <p>{error.data}</p>
-//       </div>
-//     );
-//   } else if (error instanceof Error) {
-//     return (
+  // Check if the error is a response error
+  if (isRouteErrorResponse(error)) {
+    statusCode = error.status;
+    if (statusCode === 504) {
+      errorMessage =
+        'The server took too long to respond. Please reload the page.';
+    } else {
+      errorMessage = error.statusText || errorMessage;
+    }
+  } else if (error instanceof Error) {
+    // Handle other types of network errors
+    if (error.message.includes('Network request failed')) {
+      errorMessage =
+        'The server took too long to respond. Please reload the page.';
+    }
+  }
 
-//     );
-//   } else {
-//     return <h1>Unknown Error</h1>;
-//   }
-// }
+  return (
+    <html>
+      <head>
+        <title>Oh no!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <div className='flex flex-col gap-2 justify-center items-center h-screen w-full'>
+          <h1 className='text-red-600'>Error {statusCode}</h1>
+          <p className='text-red-700'>{errorMessage}</p>
+          <AppButton
+            onClick={() => window.location.reload()}
+            label={'Reload Page'}
+          />
+        </div>
+        <Scripts />
+      </body>
+    </html>
+  );
+}
