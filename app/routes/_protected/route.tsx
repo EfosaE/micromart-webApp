@@ -1,8 +1,8 @@
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { Link, Outlet, useLoaderData } from '@remix-run/react';
+import MenuComp from '~/components/Menu';
 import { createUserSession, getUser } from '~/services/session.server';
 import { isUser, isUserWithAccessToken, User } from '~/types';
-
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUrl = new URL(request.url); // Get the current URL
@@ -38,14 +38,15 @@ type LoaderData = {
   error?: string;
 };
 
-const GlobalLayout = () => {
+const ProtectedLayout = () => {
   const { user, error } = useLoaderData<LoaderData>();
 
   return (
     <main className='container'>
+      <MenuComp user={user as User} />
       <Outlet />
     </main>
   );
 };
 
-export default GlobalLayout;
+export default ProtectedLayout;

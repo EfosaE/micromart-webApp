@@ -17,9 +17,8 @@ import Header from './components/Header';
 import { createUserSession, getUser } from './services/session.server';
 import { isUser, isUserWithAccessToken } from './types';
 import Breadcrumbs from './components/Breadcrumbs';
-export let handle = {
-  breadcrumb: () => 'Home',
-};
+
+
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
   {

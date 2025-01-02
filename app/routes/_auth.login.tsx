@@ -13,7 +13,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { ZodError } from 'zod';
-import { Button } from '~/components/Button';
+
 import { Input } from '~/components/Input';
 import { loginUser } from '~/services/api/auth.api';
 import { safeRedirect } from '~/utils/safeRedirect';
@@ -22,6 +22,7 @@ import { parseCookie } from '~/utils/cookieUtils';
 import { createAuthCookie } from '~/services/cookies.server';
 import { createUserSession } from '~/services/session.server';
 import { isErrorResponse, User } from '~/types';
+import { AuthButton } from '~/components/Button';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -150,7 +151,7 @@ export default function LoginForm() {
       />
 
       <input type='hidden' name='redirectTo' value={redirectTo} />
-      <Button
+      <AuthButton
         label={isSubmitting ? 'Logging in...' : 'Sign In'}
         type={'submit'}
         disabled={isSubmitting}

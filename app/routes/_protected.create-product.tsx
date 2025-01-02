@@ -64,12 +64,15 @@ export async function action({ request }: ActionFunctionArgs) {
     });
     if (isErrorResponse(response)) {
       console.log(response);
-      return new Response(JSON.stringify({ errorMessage: 'Upload Failed' }), {
-        status: response.statusCode || 500, // HTTP status
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      return new Response(
+        JSON.stringify({ errorMessage: response.error || 'Upload Failed' }),
+        {
+          status: response.statusCode || 500, // HTTP status
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
     }
     if (isSuccessResponse(response)) {
       const { data } = response;
@@ -105,7 +108,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 import { Input } from '~/components/Input';
-import { Button } from '~/components/Button';
+;import { AppButton} from '~/components/Button'
 import { useEffect, useState } from 'react';
 import ProductTagsDropdown from './products/ProductsTagDropdown';
 import { ZodError } from 'zod';
@@ -126,7 +129,7 @@ export default function CreateProduct() {
     console.log(event.target);
     setIsUrl(event.target.value === 'URL');
   };
-
+  console.log(isSubmitting);
   useEffect(() => {
     if (actionData?.successMessage) {
       enqueueSnackbar(actionData.successMessage, { variant: 'success' });
@@ -147,7 +150,7 @@ export default function CreateProduct() {
     <Form
       method='post'
       encType='multipart/form-data'
-      className='flex flex-col container my-4 gap-4 '>
+      className='flex flex-col my-4 gap-4 '>
       <Input
         label='Product Name'
         name='name'
@@ -249,9 +252,11 @@ export default function CreateProduct() {
           />
         </div>
       )}
-      <Button
-        label={'Create'}
-        className='text-white bg-secondary p-3 w-fit rounded mt-4' disabled={isSubmitting}></Button>
+      <AppButton
+        label={isSubmitting ? 'Creating...' : 'Create Product'}
+        type={'submit'}
+        disabled={isSubmitting}
+      />
     </Form>
   );
 }

@@ -9,12 +9,12 @@ import { Input } from '~/components/Input';
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import { authSchema } from '~/utils/validation';
 import { ZodError } from 'zod';
-import { Button } from '~/components/Button';
 import { useEffect, useState } from 'react';
 import { safeRedirect } from '~/utils/safeRedirect';
 import { signUpUser } from '~/services/api/auth.api';
 import { useSnackbar } from 'notistack';
 import { isErrorResponse } from '~/types';
+import { AuthButton } from '~/components/Button';
 
 export const meta: MetaFunction = () => [{ title: 'Sign Up' }]; // this causes remix to behave a weird way in dev
 
@@ -115,7 +115,7 @@ export default function Register() {
       </div>
 
       <input type='hidden' name='redirectTo' value={redirectTo} />
-      <Button
+      <AuthButton
         label={isSubmitting ? 'Please Wait...' : 'Sign Up'}
         type={'submit'}
         disabled={isSubmitting}
