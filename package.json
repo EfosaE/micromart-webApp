@@ -28,6 +28,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "isbot": "^4.4.0",
+    "node-cache": "^5.1.2",
     "notistack": "^3.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.15.1",
+    "@types/node-cache": "^4.2.5",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "autoprefixer": "^10.4.20",

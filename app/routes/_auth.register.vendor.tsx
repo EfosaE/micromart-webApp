@@ -1,56 +1,75 @@
 import {
   Form,
   useActionData,
+  useLoaderData,
   useNavigation,
   useSearchParams,
 } from '@remix-run/react';
 import { redirect } from '@remix-run/node';
 import { Input } from '~/components/Input';
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { authSchema } from '~/utils/validation';
+import { authSchema, vendorAuthSchema } from '~/utils/validation';
 import { ZodError } from 'zod';
 import { useEffect, useState } from 'react';
 import { safeRedirect } from '~/utils/safeRedirect';
-import { signUpUser } from '~/services/api/auth.api';
+import { signUpUser, signUpVendor } from '~/services/api/auth.api';
 import { useSnackbar } from 'notistack';
-import { isErrorResponse } from '~/types';
+import { isErrorResponse, isSuccessResponse } from '~/types';
 import { AuthButton } from '~/components/Button';
+import Categories, { Category } from '~/components/Categories';
+import { getCategories } from '~/services/api/product.api';
 
 export const meta: MetaFunction = () => [{ title: 'Sign Up' }]; // this causes remix to behave a weird way in dev
 
+export async function loader() {
+  const categories = await getCategories();
+  if (categories) return categories;
+  return null;
+}
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-
   const name = formData.get('name')?.toString();
   const email = formData.get('email')?.toString();
   const password = formData.get('password')?.toString();
+  const categoryId = formData.get('categoryName[id]')?.toString();
+  const categoryName = formData.get('categoryName[name]')?.toString();
+  const businessName = formData.get('businessName')?.toString();
+  const role = formData.get('role')?.toString();
   const redirectTo = safeRedirect(formData.get('redirectTo')?.toString(), '/');
-  console.log('redirectUrl:', redirectTo);
 
+  const zodFormObject = { name, email, password, categoryName, businessName };
+  const vendorFormObject = {
+    name,
+    email,
+    password,
+    businessName,
+    categoryId,
+    role,
+  };
+  console.log(vendorFormObject);
   try {
     // Use zod to validate the form data
-    authSchema.parse({ name, email, password });
-    if (name && email && password) {
-      // call your signIn endpoint
-      const result = await signUpUser({ name, email, password });
+    vendorAuthSchema.parse(zodFormObject);
+    // call your signIn endpoint
+    const result = await signUpVendor(vendorFormObject);
+    if (isSuccessResponse(result)) {
+      const successMessage = encodeURIComponent(
+        'Sign up successful! Please log in.'
+      );
+      return redirect(
+        `/login?redirectTo=${encodeURIComponent(
+          redirectTo
+        )}&successMessage=${successMessage}`
+      );
+    }
+    if (isErrorResponse(result)) {
       console.log(result);
-      if (result.success) {
-        const successMessage = encodeURIComponent(
-          'Sign up successful! Please log in.'
-        );
-        return redirect(
-          `/login?redirectTo=${encodeURIComponent(
-            redirectTo
-          )}&successMessage=${successMessage}`
-        );
-      } else if (isErrorResponse(result)) {
-        console.log(result);
-        // Failure: Return the error message to be displayed on the client
-        return new Response(JSON.stringify({ signUpError: result.error }), {
-          status: result.statusCode,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
+      // Failure: Return the error message to be displayed on the client
+      return new Response(JSON.stringify({ signUpError: result.error }), {
+        status: result.statusCode,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
   } catch (error) {
     // If validation fails, format the errors for the UI
@@ -72,6 +91,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Register() {
+  const categories = useLoaderData<Category[]>();
   const [password, setPassword] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState(false);
@@ -97,9 +117,20 @@ export default function Register() {
     setShowPassword((prev) => !prev);
   };
   return (
-    <Form method='post' className='space-y-6 w-full'>
+    <Form method='post' className='space-y-2 w-full'>
       <Input name={'name'} label={'name'} error={actionData?.errors?.name} />
       <Input name={'email'} label={'email'} error={actionData?.errors?.email} />
+      <Categories categories={categories} />
+      {actionData?.errors?.categoryName && (
+        <p id={`categoryName-error`} className='text-red-500 text-sm'>
+          {actionData?.errors?.categoryName}
+        </p>
+      )}
+      <Input
+        name={'businessName'}
+        label={'business Name'}
+        error={actionData?.errors?.businessName}
+      />
       <div className='relative'>
         <Input
           label={'password'}
@@ -115,6 +146,7 @@ export default function Register() {
       </div>
 
       <input type='hidden' name='redirectTo' value={redirectTo} />
+      <input type='hidden' name='role' value='VENDOR' />
       <AuthButton
         label={isSubmitting ? 'Please Wait...' : 'Sign Up'}
         type={'submit'}

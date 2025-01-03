@@ -71,11 +71,10 @@ export default function App() {
   const matches = useMatches();
   const location = useLocation();
 
-  // Check if the current route is one of the authentication routes
-  const isAuthPage =
-    location.pathname === '/login' ||
-    location.pathname === '/register' ||
-    location.pathname === '/create-product';
+  // Check if the current route includes one of the authentication routes
+  const isAuthPage = ['/login', '/register', '/create-product'].some((route) =>
+    location.pathname.includes(route)
+  );
 
   return (
     <html>

@@ -23,7 +23,9 @@ export function isUser(data: any): data is User {
     typeof data === 'object' && data !== null && 'id' in data && 'name' in data
   );
 }
-export function isUserWithAccessToken(value: any): value is UserWithAccessToken {
+export function isUserWithAccessToken(
+  value: any
+): value is UserWithAccessToken {
   return (
     typeof value === 'object' &&
     value !== null &&
@@ -35,7 +37,20 @@ export function isUserWithAccessToken(value: any): value is UserWithAccessToken 
   );
 }
 
+// export function isErrorResponse(data: any): data is ErrorResponse {
+//   return (
+//     typeof data === 'object' &&
+//     data !== null &&
+//     'success' in data &&
+//     data.success === false &&
+//     'error' in data &&
+//     'statusCode' in data &&
+//     typeof data.error === 'string' &&
+//     typeof data.statusCode === 'number'
+//   );
+// }
 
+// relaxed error shape
 export function isErrorResponse(data: any): data is ErrorResponse {
   return (
     typeof data === 'object' &&
@@ -43,8 +58,6 @@ export function isErrorResponse(data: any): data is ErrorResponse {
     'success' in data &&
     data.success === false &&
     'error' in data &&
-    'statusCode' in data &&
-    typeof data.error === 'string' &&
     typeof data.statusCode === 'number'
   );
 }
@@ -67,9 +80,17 @@ const generateRange = (start: number, end: number): number[] => {
 // Generate all status codes from 400 to 499
 const errorStatusCodes = generateRange(400, 500);
 
-
 export enum Role {
   ADMIN = 'ADMIN',
   USER = 'USER',
   SELLER = 'SELLER',
 }
+
+// optional types to remove the TS error, this is validated by Zod no fear
+export type VendorFormObject = {
+  name?: string;
+  email?: string;
+  password?: string;
+  businessName?: string;
+  categoryId?: string;
+};

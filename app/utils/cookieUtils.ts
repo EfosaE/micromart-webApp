@@ -17,3 +17,9 @@ export function parseCookie(cookieString: string) {
 export function parseSetCookieHeader(cookies: string[]) {
   return cookies.map(parseCookie);
 }
+
+
+export function generateKey(request: Request): string {
+  const { method, url } = request;
+  return `${method}-${url}`;
+}

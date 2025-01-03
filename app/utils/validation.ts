@@ -12,15 +12,32 @@ export const authSchema = z.object({
     .min(8, 'Must contain at least 8 chars')
     .max(48, 'Must contain at most 48 chars'),
 });
-
+// Extended schema with category and business
+export const vendorAuthSchema = authSchema.merge(
+  z.object({
+    categoryName: z
+      .string()
+      .min(3, 'Category must contain at least 3 chars')
+      .max(50, 'Category must contain at most 50 chars'),
+    businessName: z
+      .string()
+      .min(3, 'Business name must contain at least 3 chars')
+      .max(100, 'Business name must contain at most 100 chars'),
+  })
+);
 export type RegisterAccountAuth = z.infer<typeof authSchema>;
+export type VendorAccountAuth = z.infer<typeof vendorAuthSchema>;
+
+export const vendorAuthSchemaWithoutCName = vendorAuthSchema.omit({
+  categoryName: true,
+});
 
 export const authSchemaWithoutName = authSchema.omit({ name: true });
 
 export type GetUserByEmailAuth = z.infer<typeof authSchemaWithoutName>;
 
 // Base Product Schema
-const ImgTypeEnum = z.enum(['URL', 'FILE']); 
+const ImgTypeEnum = z.enum(['URL', 'FILE']);
 
 // Define the schema for each tag
 const TagSchema = z.object({
@@ -42,9 +59,10 @@ export const productSchema = z.object({
     .positive('Qunatity must be greater than zero')
     .int('Quantity must be an integer')
     .nonnegative('Quantity cannot be negative'),
-  tags: z.array(TagSchema)
-  .min(1, 'Choose at least one tag')
-  .max(10, 'Cannot have more than 10 tags'),
+  tags: z
+    .array(TagSchema)
+    .min(1, 'Choose at least one tag')
+    .max(10, 'Cannot have more than 10 tags'),
   description: z
     .string()
     .min(10, 'Description must contain at least 10 characters')
