@@ -5,7 +5,6 @@ export let handle = {
   breadcrumb: () => 'Products',
 };
 
-
 const Products = () => {
   return (
     <div className='container'>

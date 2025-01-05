@@ -1,6 +1,6 @@
 import {
   ActionFunctionArgs,
-  createCookie,
+  data,
   LoaderFunctionArgs,
 } from '@remix-run/node';
 import {
@@ -27,15 +27,7 @@ import { AuthButton } from '~/components/Button';
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const successMessage = url.searchParams.get('successMessage');
-  return new Response(
-    JSON.stringify({ successMessage }), // Serialize success message into the body
-    {
-      status: 200, // HTTP status
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  return { successMessage };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -49,7 +41,6 @@ export async function action({ request }: ActionFunctionArgs) {
     // Use zod to validate the form data
     authSchemaWithoutName.parse({ email, password });
     if (email && password) {
-
       const result = await loginUser({ email, password });
       if (result.success && result.headers) {
         const token: string = result.data.accessToken;
@@ -74,11 +65,14 @@ export async function action({ request }: ActionFunctionArgs) {
           });
         } // else (no-cookies are sent with the response),
       } else if (isErrorResponse(result)) {
-        // Failure: Return the error message to be displayed on the client
-        return new Response(JSON.stringify({ loginError: result.error }), {
-          status: result.statusCode,
-          headers: { 'Content-Type': 'application/json' },
-        });
+        return data(
+          { loginError: result.error },
+          {
+            status: result.statusCode,
+
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
       }
     }
   } catch (error) {
@@ -86,26 +80,33 @@ export async function action({ request }: ActionFunctionArgs) {
     if (error instanceof ZodError) {
       const { fieldErrors } = error.flatten();
       console.log('fieldErrors', fieldErrors);
-      return new Response(JSON.stringify({ errors: fieldErrors }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return { errors: fieldErrors };
     }
 
     // Handle unexpected errors
-    return new Response(JSON.stringify({ error: 'Something went wrong' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return data(
+      { error: 'Something went wrong' },
+      {
+        status: 500,
+      }
+    );
   }
 }
+
+type ActionType = {
+  loginError?: string | string[];
+  errors?: {
+    email?: string;
+    password?: string;
+  };
+};
 
 export default function LoginForm() {
   const loaderData = useLoaderData<{ successMessage?: string }>();
   const [password, setPassword] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState(false);
-  const actionData = useActionData<typeof action>();
+  const actionData = useActionData<ActionType>();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') ?? '/';
   const navigation = useNavigation();

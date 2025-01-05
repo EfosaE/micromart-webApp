@@ -93,4 +93,5 @@ export type VendorFormObject = {
   password?: string;
   businessName?: string;
   categoryId?: string;
+  categoryName?: string
 };

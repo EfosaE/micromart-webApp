@@ -7,6 +7,8 @@ import {
   ListboxOption,
 } from '@headlessui/react';
 import CheckIcon from './icons/CheckIcon';
+import { Await } from '@remix-run/react';
+import { Suspense, useEffect, useState } from 'react';
 
 export interface Category {
   name: string;
@@ -14,10 +16,17 @@ export interface Category {
 }
 // Categories Component
 interface CategoriesProps {
-  categories: Category[]; 
+  categoriesPromise: Promise<Category[]>;
 }
 
-const Categories: React.FC<CategoriesProps> = ({ categories }) => {
+const Categories: React.FC<CategoriesProps> = ({ categoriesPromise }) => {
+  const [hydrated, setHydrated] = useState(false);
+
+  // Track when hydration completes
+  useEffect(() => {
+    console.log(hydrated);
+    setHydrated(true);
+  }, [hydrated]);
   return (
     <Field className='flex flex-col'>
       <Label>Category</Label>
@@ -27,19 +36,31 @@ const Categories: React.FC<CategoriesProps> = ({ categories }) => {
             ({ value }) => (value ? value.name : 'Select a category...') // Fallback text for undefined value
           }
         </ListboxButton>
-        <ListboxOptions
-          anchor='bottom start'
-          className='mt-1 h-48 overflow-auto bg-white p-2.5 w-fit rounded'>
-          {categories.map((category: { name: string; id: number }) => (
-            <ListboxOption
-              key={category.id}
-              value={category}
-              className='group flex gap-1 text-sm p-1 bg-white data-[focus]:bg-blue-100 cursor-pointer my-1'>
-              <CheckIcon className='invisible size-5 group-data-[selected]:visible text-secondary' />
-              {category.name}
-            </ListboxOption>
-          ))}
-        </ListboxOptions>
+        {hydrated && (
+          <Suspense fallback='Loading categories...'>
+            <Await
+              resolve={categoriesPromise as unknown as Category[]}
+              errorElement={
+                <p className='text-red-500'>Failed to load categories.</p>
+              }>
+              {(categories) => (
+                <ListboxOptions
+                  anchor='bottom start'
+                  className='mt-1 h-48 overflow-auto bg-white p-2.5 w-fit rounded'>
+                  {categories.map((category: { name: string; id: number }) => (
+                    <ListboxOption
+                      key={category.id}
+                      value={category}
+                      className='group flex gap-1 text-sm p-1 bg-white data-[focus]:bg-blue-100 cursor-pointer my-1'>
+                      <CheckIcon className='invisible size-5 group-data-[selected]:visible text-secondary' />
+                      {category.name}
+                    </ListboxOption>
+                  ))}
+                </ListboxOptions>
+              )}
+            </Await>
+          </Suspense>
+        )}
       </Listbox>
     </Field>
   );

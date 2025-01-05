@@ -41,22 +41,36 @@ app.use(cors(corsOptions));
 // Use cookie-parser middleware
 app.use(cookieParser());
 
-// // Custom middleware to get and log all cookies
-// const getCookiesMiddleware = (req, res, next) => {
-//   console.log('Cookies from middleware:', req.cookies);
 
-//   // You can access specific cookies using req.cookies.<cookie_name>
-//   // For example:
-//   // const userSession = req.cookies.userSession;
+// redis
+import { createClient } from 'redis';
 
-//   next(); // Pass control to the next middleware or route handler
-// };
-// app.use(getCookiesMiddleware);
-
-// express endpoint for remix to understand(call it in your remix app)
-app.get('/api/refresh', async (req, res) => {
-
+export const client = createClient({
+  username: 'default',
+  password: 'nPPIMlMh7RsIbYADQgPTh4jkkxM9ioHE',
+  socket: {
+    host: 'redis-18677.c311.eu-central-1-1.ec2.redns.redis-cloud.com',
+    port: 18677,
+  },
 });
+
+// client.on('error', (err) => console.log('Redis Client Error', err));
+
+(async () => {
+  try {
+    await client.connect();
+    console.log('Connected to Redis');
+    await client.set('foo', 'bar');
+
+    const result = await client.get('foo');
+    console.log(result); // >>> bar
+  } catch (err) {
+    console.error('Failed to connect to Redis:', err);
+  }
+})();
+
+
+
 
 const build = viteDevServer
   ? () => viteDevServer.ssrLoadModule('virtual:remix/server-build')

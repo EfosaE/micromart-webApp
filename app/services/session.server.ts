@@ -84,12 +84,14 @@ export async function createUserSession({
       maxAge: 60 * 20, // 20 minutes = 1200 seconds
     })
   );
+
   headers.append(
     'Set-Cookie',
     await userSessionStorage.commitSession(userSession, {
       maxAge: 60 * 15, // 15 minutes = 1200 seconds
     })
   );
+  headers.append('X-Custom-Header', 'MyCustomHeaderValue');
 
   console.log(redirectTo, headers);
 

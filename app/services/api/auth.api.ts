@@ -1,11 +1,22 @@
-import { GetUserByEmailAuth, RegisterAccountAuth, VendorAccountAuth } from '~/utils/validation';
+import {
+  GetUserByEmailAuth,
+  RegisterAccountAuth,
+  VendorAccountAuth,
+} from '~/utils/validation';
 import { axiosAuthWrapper, axiosInstance } from './axios.server';
 import axios, { isAxiosError } from 'axios';
-import { SuccessResponse, UserWithAccessToken, VendorFormObject } from '~/types';
+import {
+  SuccessResponse,
+  UserWithAccessToken,
+  VendorFormObject,
+} from '~/types';
 import catchAsync from '~/utils/catchAsync';
 
 export const signUpUser = catchAsync(async (userData: RegisterAccountAuth) => {
-  const response = await axiosInstance.post('/api/v1/auth/register/user', userData);
+  const response = await axiosInstance.post(
+    '/api/v1/auth/register/user',
+    userData
+  );
 
   return { success: true, data: response.data };
 });
@@ -22,7 +33,6 @@ export const loginUser = catchAsync(async (userData: GetUserByEmailAuth) => {
   // Extract headers and response data
   const headers = response.headers;
   const data = response.data;
-
   return {
     success: true,
     data,
@@ -30,9 +40,7 @@ export const loginUser = catchAsync(async (userData: GetUserByEmailAuth) => {
   };
 });
 
-
-
-export const getUserProfile = catchAsync<SuccessResponse , [string]>(
+export const getUserProfile = catchAsync<SuccessResponse, [string]>(
   async (access_token: string): Promise<SuccessResponse> => {
     console.log('BE called !!!');
 
@@ -48,7 +56,6 @@ export const getUserProfile = catchAsync<SuccessResponse , [string]>(
     };
   }
 );
-
 
 export const getNewToken = async (refreshToken: string) => {
   console.log('get token called!!', refreshToken);

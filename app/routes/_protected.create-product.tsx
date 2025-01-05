@@ -1,20 +1,32 @@
-import { ActionFunctionArgs } from '@remix-run/node';
-import { axiosAuthWrapper, axiosInstance } from '~/services/api/axios.server';
-
-// export const handle = {
-//   breadcrumb: () => <Link to='/parent/child'>Child Route</Link>,
-// };
+import { ActionFunctionArgs, data } from '@remix-run/node';
 
 export let handle = {
   breadcrumb: () => 'Create-Product',
 };
 
+
+
+
 export async function action({ request }: ActionFunctionArgs) {
   const accessToken = await getAccessToken(request);
   const originalFormData = await request.formData();
-  console.log('originalFormData', originalFormData);
   const imgFile = originalFormData.get('image');
+  const intent = originalFormData.get('intent');
+  if (intent === 'getTags') {
+    const response = await axiosInstance.get('/api/v1/products/tags');
+    console.log(response.data);
 
+    // Return the data with the Cache-Control header
+    return data(
+      { tags: response.data },
+      {
+        status: 201,
+        headers: {
+          'Cache-Control': 'max-age=3600, public, ',
+        },
+      }
+    );
+  }
   // Convert originalFormData into a plain object for zod validation
 
   const formObject = Object.fromEntries(originalFormData.entries());
@@ -33,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
         : formObject.tags,
   };
 
-  console.log('zodFormObject', zodFormObject);
+  // console.log('zodFormObject', zodFormObject);
 
   // Create FormData
   const requestFormData = new FormData();
@@ -53,39 +65,35 @@ export async function action({ request }: ActionFunctionArgs) {
     requestFormData.append('image', imgFile);
   }
 
-  console.log('requestFormData', requestFormData);
+  // console.log('requestFormData', requestFormData);
 
   try {
     // Use zod to validate the form data
     productSchema.parse(zodFormObject);
+
     // BE should transform this data. as I cant because of the file input.
     const response = await createProduct(accessToken!, requestFormData, {
       'Content-Type': 'multipart/form-data',
     });
+
     if (isErrorResponse(response)) {
       console.log(response);
-      return new Response(
-        JSON.stringify({ errorMessage: response.error || 'Upload Failed' }),
+      return data(
+        { errorMessage: response.error || 'Upload Failed' },
         {
           status: response.statusCode || 500, // HTTP status
-          headers: {
-            'Content-Type': 'application/json',
-          },
         }
       );
     }
     if (isSuccessResponse(response)) {
-      const { data } = response;
-      console.log(response);
-      return new Response(
-        JSON.stringify({
-          successMessage: `Upload successful for ${data.name} Product ID:${data.id}`,
-        }),
+      const { data: product } = response;
+      console.log('success!', response);
+      return data(
+        {
+          successMessage: `Upload successful for ${product.name} Product ID:${product.id}`,
+        },
         {
           status: 201, // HTTP status
-          headers: {
-            'Content-Type': 'application/json',
-          },
         }
       );
     }
@@ -97,18 +105,31 @@ export async function action({ request }: ActionFunctionArgs) {
 
       return { errors: fieldErrors };
     }
-    return new Response(JSON.stringify({ message: 'Upload failed' }), {
-      status: 400, // HTTP status
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
   }
+  return data(
+    { message: 'Upload failed' },
+    {
+      status: 400, // HTTP status
+    }
+  );
 }
 
-import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
+type ActionType = {
+  successMessage?: string;
+  errorMessage?: string | string[];
+  errors?: {
+    name: string;
+    price: string;
+    quantity: string;
+    tags: string;
+    description: string;
+    imgUrl: string;
+  };
+};
+
+import { Form, useActionData, useNavigation } from '@remix-run/react';
 import { Input } from '~/components/Input';
-;import { AppButton} from '~/components/Button'
+import { AppButton } from '~/components/Button';
 import { useEffect, useState } from 'react';
 import ProductTagsDropdown from './products/ProductsTagDropdown';
 import { ZodError } from 'zod';
@@ -117,10 +138,11 @@ import { createProduct } from '~/services/api/product.api';
 import { isErrorResponse, isSuccessResponse } from '~/types';
 import { productSchema } from '~/utils/validation';
 import { TagTypes } from '~/data';
-import { enqueueSnackbar } from 'notistack';
+import { closeSnackbar, enqueueSnackbar, SnackbarKey } from 'notistack';
+import { axiosInstance } from '~/services/api/axios.server';
 
 export default function CreateProduct() {
-  const actionData = useActionData<typeof action>();
+  const actionData = useActionData<ActionType>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
   const [isUrl, setIsUrl] = useState(true); // State to track if the user wants to use URL or upload a file
@@ -129,13 +151,31 @@ export default function CreateProduct() {
     console.log(event.target);
     setIsUrl(event.target.value === 'URL');
   };
-  console.log(isSubmitting);
   useEffect(() => {
+    const action = (snackbarId: SnackbarKey | undefined) => (
+      <>
+        <button
+          onClick={() => {
+            closeSnackbar(snackbarId);
+            // window.location.reload();
+          }}>
+          dismiss
+        </button>
+      </>
+    );
     if (actionData?.successMessage) {
-      enqueueSnackbar(actionData.successMessage, { variant: 'success' });
+      enqueueSnackbar(actionData.successMessage, {
+        variant: 'success',
+        action,
+        persist: true,
+      });
     }
     if (actionData?.errorMessage) {
-      enqueueSnackbar(actionData.errorMessage, { variant: 'error' });
+      enqueueSnackbar(actionData.errorMessage, {
+        variant: 'error',
+        action,
+        persist: true,
+      });
     }
   }, [actionData]);
 
@@ -252,6 +292,12 @@ export default function CreateProduct() {
           />
         </div>
       )}
+      <AppButton
+        type={'submit'}
+        label={'Get Tags'}
+        name='intent'
+        value='getTags'
+      />
       <AppButton
         label={isSubmitting ? 'Creating...' : 'Create Product'}
         type={'submit'}

@@ -29,22 +29,9 @@ export const createProduct = catchAsync<
   }
 );
 
-export const getProduct = catchAsync<
-  SuccessResponse,
-  [string, FormData, Record<string, string>]
->(
-  async (
-    accessToken: string,
-    formData: FormData,
-    customHeaders: Record<string, string>
-  ): Promise<SuccessResponse> => {
-    const response = await axiosAuthWrapper(
-      accessToken,
-      '/api/v1/products/',
-      'POST',
-      formData,
-      customHeaders // Passing custom headers here
-    );
+export const getProducts = catchAsync<SuccessResponse, []>(
+  async (): Promise<SuccessResponse> => {
+    const response = await axiosInstance.get('/api/v1/products');
 
     return {
       success: true,

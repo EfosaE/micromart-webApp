@@ -5,7 +5,7 @@ import {
   useNavigation,
   useSearchParams,
 } from '@remix-run/react';
-import { redirect } from '@remix-run/node';
+import { data, redirect } from '@remix-run/node';
 import { Input } from '~/components/Input';
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import { authSchema } from '~/utils/validation';
@@ -17,7 +17,7 @@ import { useSnackbar } from 'notistack';
 import { isErrorResponse } from '~/types';
 import { AuthButton } from '~/components/Button';
 
-export const meta: MetaFunction = () => [{ title: 'Sign Up' }]; // this causes remix to behave a weird way in dev
+export const meta: MetaFunction = () => [{ title: 'Sign Up' }];
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -46,11 +46,13 @@ export async function action({ request }: ActionFunctionArgs) {
         );
       } else if (isErrorResponse(result)) {
         console.log(result);
-        // Failure: Return the error message to be displayed on the client
-        return new Response(JSON.stringify({ signUpError: result.error }), {
-          status: result.statusCode,
-          headers: { 'Content-Type': 'application/json' },
-        });
+        // Handle unexpected errors
+        return data(
+          { signUpError: result.error },
+          {
+            status: result.statusCode,
+          }
+        );
       }
     }
   } catch (error) {
@@ -58,25 +60,33 @@ export async function action({ request }: ActionFunctionArgs) {
     if (error instanceof ZodError) {
       const { fieldErrors } = error.flatten();
       console.log('fieldErrors', fieldErrors);
-      return new Response(JSON.stringify({ errors: fieldErrors }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return { errors: fieldErrors };
     }
 
     // Handle unexpected errors
-    return new Response(JSON.stringify({ error: 'Something went wrong' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return data(
+      { error: 'Something went wrong' },
+      {
+        status: 500,
+      }
+    );
   }
 }
+
+type ActionType = {
+  signUpError?: string | string[];
+  errors?: {
+    name?: string;
+    email?: string;
+    password?: string;
+  };
+};
 
 export default function Register() {
   const [password, setPassword] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState(false);
-  const actionData = useActionData<typeof action>();
+  const actionData = useActionData<ActionType>();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') ?? '/';
   const navigation = useNavigation();

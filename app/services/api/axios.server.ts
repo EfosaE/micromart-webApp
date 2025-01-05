@@ -47,12 +47,9 @@ export const axiosInstance = axios.create({
 // // Interceptor to check response headers
 // axiosInstance.interceptors.response.use(
 //   (response) => {
-//     // Check for the Set-Cookie header in the response
-//     const cookies = response.headers['set-cookie'];
-//     if (cookies) {
-//       console.log('Cookies set by backend:', cookies);
-//     }
-//     return response;
+//     console.log(response.headers)
+//    console.log('Cache-Control Header:', response.headers['cache-control']);
+//    return response;
 //   },
 //   (error) => {
 //     console.error('Error in response:', error);
@@ -87,22 +84,4 @@ export const axiosInstance = axios.create({
 //   }
 // );
 
-// try {
-//   // Send a GET request to your API with cookies included in the header
-//   const response = await axios.get(
-//     `${process.env.REMIX_APP_URL}/api/refresh`,
-//     {
-//       headers: {
-//         Cookie: `refresh_token=${refreshToken}`, // Attach the refreshToken as a cookie
-//       },
-//       withCredentials: true, // This ensures cookies are sent with the request... Nah
-//     }
-//   );
-//   console.log(response.data);
-//   const token: string = response.data.accessToken;
 
-// } catch (error) {
-//   if (isAxiosError(error)) {
-//     console.log(error.response);
-//   }
-// }

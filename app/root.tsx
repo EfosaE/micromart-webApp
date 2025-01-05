@@ -13,7 +13,6 @@ import { SpeedInsights } from '@vercel/speed-insights/remix';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import stylesheet from '~/tailwind.css?url';
 import Footer from '~/components/Footer';
-import Navbar from '~/components/Navbar';
 import { SnackbarProvider } from 'notistack';
 import Header from './components/Header';
 import { createUserSession, getUser } from './services/session.server';
@@ -44,10 +43,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const response = await getUser(request);
   console.log('root loader ran');
   if (isUser(response)) {
-    return new Response(JSON.stringify({ user: response }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return { user: response };
   }
 
   if (isUserWithAccessToken(response)) {
@@ -61,10 +57,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   }
 
-  return new Response(JSON.stringify({ user: null }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  return { user: null };
 };
 
 export default function App() {
@@ -111,7 +104,9 @@ export function ErrorBoundary() {
   console.error(error);
   let errorMessage = 'An unexpected error occurred. Please try again later.';
   let statusCode = 500;
-
+  if (error instanceof Error) {
+    errorMessage = error.message.split('\n')[0];
+  }
   // Check if the error is a response error
   if (isRouteErrorResponse(error)) {
     statusCode = error.status;
@@ -137,7 +132,7 @@ export function ErrorBoundary() {
         <Links />
       </head>
       <body>
-        <div className='flex flex-col gap-2 justify-center items-center h-screen w-full'>
+        <div className='flex flex-col gap-6 justify-center items-center h-screen w-full'>
           <h1 className='text-red-600'>Error {statusCode}</h1>
           <p className='text-red-700'>{errorMessage}</p>
           <AppButton

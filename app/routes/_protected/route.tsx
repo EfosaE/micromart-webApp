@@ -26,10 +26,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   }
   if (isUser(response)) {
-    return new Response(JSON.stringify({ user: response }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return { user: response };
   }
 };
 
