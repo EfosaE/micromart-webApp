@@ -1,8 +1,4 @@
-import {
-  ActionFunctionArgs,
-  data,
-  LoaderFunctionArgs,
-} from '@remix-run/node';
+import { ActionFunctionArgs, data, LoaderFunctionArgs } from '@remix-run/node';
 import {
   useActionData,
   Form,
@@ -55,6 +51,16 @@ export async function action({ request }: ActionFunctionArgs) {
             parsedCookie.settings
           );
           console.log('redirectUrl from login:', redirectTo);
+
+          // try {
+          //   // If the user does not exist, create the hash for the user
+          //   await client.hSet(`user:${user.id}`, 'name', user.name);
+          //   // Set a TTL (time to live) on the key (e.g., 60 seconds)
+          //   await client.expire(`user:${user.id}`, 60); // TTL in seconds
+          // } catch (error) {
+          //   console.log(error);
+          // }
+
           // Redirect with the Set-Cookie header
           return createUserSession({
             request,

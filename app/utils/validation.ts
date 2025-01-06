@@ -39,11 +39,7 @@ export type GetUserByEmailAuth = z.infer<typeof authSchemaWithoutName>;
 // Base Product Schema
 const ImgTypeEnum = z.enum(['URL', 'FILE']);
 
-// Define the schema for each tag
-const TagSchema = z.object({
-  name: z.string().min(1, 'Tag name cannot be empty'),
-  tagType: z.nativeEnum(TagTypes), // Use the existing TagTypes enum with z.nativeEnum
-});
+
 
 export const productSchema = z.object({
   name: z
@@ -60,9 +56,9 @@ export const productSchema = z.object({
     .int('Quantity must be an integer')
     .nonnegative('Quantity cannot be negative'),
   tags: z
-    .array(TagSchema)
-    .min(1, 'Choose at least one tag')
-    .max(10, 'Cannot have more than 10 tags'),
+    .array(z.number()) // Ensure the array contains numbers
+    .min(1, 'Choose at least one tag') // Minimum 1 item
+    .max(10, 'Cannot have more than 10 tags'), // Maximum 10 items
   description: z
     .string()
     .min(10, 'Description must contain at least 10 characters')

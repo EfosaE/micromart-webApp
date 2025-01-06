@@ -1,39 +1,53 @@
 import { ActionFunctionArgs, data } from '@remix-run/node';
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from '@remix-run/react';
+import { Input } from '~/components/Input';
+import { AppButton } from '~/components/Button';
+import { useEffect, useState } from 'react';
+import ProductTagsDropdown from './products/ProductsTagDropdown';
+import { ZodError } from 'zod';
+import { getAccessToken } from '~/services/session.server';
+import { createProduct, fetchTags } from '~/services/api/product.api';
+import { isErrorResponse, isSuccessResponse, TagsData } from '~/types';
+import { productSchema } from '~/utils/validation';
+
+import { closeSnackbar, enqueueSnackbar, SnackbarKey } from 'notistack';
+import { initializeRedis } from '~/services/redis.server';
 
 export let handle = {
   breadcrumb: () => 'Create-Product',
 };
 
+export async function loader() {
+  const client = await initializeRedis()
+  const response = await fetchTags(client); 
 
+  if (isSuccessResponse(response)) {
+    // Return the data with the Cache-Control header
+    return { tagsData: response.data };
+  }
 
+  if (isErrorResponse(response)) {
+    return { error: 'Failed to fetch tags' };
+  }
+}
 
 export async function action({ request }: ActionFunctionArgs) {
   const accessToken = await getAccessToken(request);
   const originalFormData = await request.formData();
   const imgFile = originalFormData.get('image');
-  const intent = originalFormData.get('intent');
-  if (intent === 'getTags') {
-    const response = await axiosInstance.get('/api/v1/products/tags');
-    console.log(response.data);
 
-    // Return the data with the Cache-Control header
-    return data(
-      { tags: response.data },
-      {
-        status: 201,
-        headers: {
-          'Cache-Control': 'max-age=3600, public, ',
-        },
-      }
-    );
-  }
   // Convert originalFormData into a plain object for zod validation
 
   const formObject = Object.fromEntries(originalFormData.entries());
   if (imgFile) {
     delete formObject.image;
   }
-
+  console.log(formObject);
   // Initialize the zodFormObject with the rest of the form data
   const zodFormObject: { [key: string]: any } = {
     ...formObject,
@@ -45,7 +59,7 @@ export async function action({ request }: ActionFunctionArgs) {
         : formObject.tags,
   };
 
-  // console.log('zodFormObject', zodFormObject);
+  console.log('zodFormObject', zodFormObject);
 
   // Create FormData
   const requestFormData = new FormData();
@@ -65,7 +79,7 @@ export async function action({ request }: ActionFunctionArgs) {
     requestFormData.append('image', imgFile);
   }
 
-  // console.log('requestFormData', requestFormData);
+  console.log('requestFormData', requestFormData);
 
   try {
     // Use zod to validate the form data
@@ -126,31 +140,28 @@ type ActionType = {
     imgUrl: string;
   };
 };
-
-import { Form, useActionData, useNavigation } from '@remix-run/react';
-import { Input } from '~/components/Input';
-import { AppButton } from '~/components/Button';
-import { useEffect, useState } from 'react';
-import ProductTagsDropdown from './products/ProductsTagDropdown';
-import { ZodError } from 'zod';
-import { getAccessToken } from '~/services/session.server';
-import { createProduct } from '~/services/api/product.api';
-import { isErrorResponse, isSuccessResponse } from '~/types';
-import { productSchema } from '~/utils/validation';
-import { TagTypes } from '~/data';
-import { closeSnackbar, enqueueSnackbar, SnackbarKey } from 'notistack';
-import { axiosInstance } from '~/services/api/axios.server';
+type LoaderData = {
+  tagsData?: TagsData;
+  error?: string;
+};
 
 export default function CreateProduct() {
   const actionData = useActionData<ActionType>();
+  const { tagsData, error } = useLoaderData<LoaderData>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
   const [isUrl, setIsUrl] = useState(true); // State to track if the user wants to use URL or upload a file
-  const [tags, setTags] = useState<{ name: string; tagType: TagTypes }[]>([]);
+  const [tags, setTags] = useState<{ id: number; name: string }[]>([]);
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target);
     setIsUrl(event.target.value === 'URL');
   };
+
+  useEffect(() => {
+    console.log(tagsData);
+    console.log(error);
+  }, [tagsData, error]);
+
   useEffect(() => {
     const action = (snackbarId: SnackbarKey | undefined) => (
       <>
@@ -213,9 +224,17 @@ export default function CreateProduct() {
         min='1'
         error={actionData?.errors?.quantity}
       />
-      <ProductTagsDropdown tags={tags} setTags={setTags} />
+      <ProductTagsDropdown
+        tags={tags}
+        setTags={setTags}
+        tagsData={tagsData as TagsData}
+      />
       {/* Hidden Input for Tags */}
-      <input type='hidden' name='tags' value={JSON.stringify(tags)} />
+      <input
+        type='hidden'
+        name='tags'
+        value={JSON.stringify(tags.map((tag) => tag.id))}
+      />
       {actionData?.errors?.tags && (
         <p id={`tags-error`} className='text-red-500 text-sm'>
           {actionData?.errors?.tags}
@@ -292,12 +311,6 @@ export default function CreateProduct() {
           />
         </div>
       )}
-      <AppButton
-        type={'submit'}
-        label={'Get Tags'}
-        name='intent'
-        value='getTags'
-      />
       <AppButton
         label={isSubmitting ? 'Creating...' : 'Create Product'}
         type={'submit'}

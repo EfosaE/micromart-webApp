@@ -1,21 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { productTags, TagTypes } from '~/data';
+import { Tag, TagsData } from '~/types';
 
 interface TagProps {
-  tags: { name: string; tagType: TagTypes }[]; // An array of strings for the tags
-  setTags: React.Dispatch<
-    React.SetStateAction<{ name: string; tagType: TagTypes }[]>
-  >; // A setter function for updating the tags
+  tagsData: TagsData;
+  tags: Tag[]; // An array of strings for the tags
+  setTags: React.Dispatch<React.SetStateAction<{ name: string; id: number }[]>>; // A setter function for updating the tags
 }
 
-export function ProductTagsDropdown({ tags, setTags }: TagProps) {
-  const [selectedTagType, setSelectedTagType] = useState<TagTypes | null>(null);
+export function ProductTagsDropdown({ tags, setTags, tagsData }: TagProps) {
+  const [selectedTagType, setSelectedTagType] = useState<string | null>(null);
   const [isDropdown, setIsDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isSubDropdown, setIsSubDropdown] = useState(false);
   // Step 1: Create state to hold the input value
   const [otherTag, setOtherTag] = useState('');
-
+  const TagTypes = Object.keys(tagsData).filter(
+    (tagType) => tagType !== 'AdminTags'
+  );
   // Handle changes to the input field with proper event typing
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOtherTag(event.target.value);
@@ -36,10 +37,10 @@ export function ProductTagsDropdown({ tags, setTags }: TagProps) {
   }, []);
 
   // Handle adding a tag
-  const handleAddTag = (tagName: string, tagType: TagTypes) => {
+  const handleAddTag = ({ name, id }: Tag) => {
     // Prevent duplicates and ensure no more than 9 tags
-    if (!tags.some((tag) => tag.name === tagName) && tags.length < 9) {
-      setTags((prevTags) => [...prevTags, { name: tagName, tagType }]);
+    if (!tags.some((tag) => tag.name === name) && tags.length < 9) {
+      setTags((prevTags) => [...prevTags, { name, id }]);
     }
   };
 
@@ -87,7 +88,7 @@ export function ProductTagsDropdown({ tags, setTags }: TagProps) {
         {isDropdown && (
           <div className='absolute text-sm md:text-base md:left-0 bg-white border border-gray-300 rounded-md shadow-lg w-56'>
             <ul className='py-1'>
-              {Object.values(TagTypes).map((tagType) => {
+              {TagTypes.map((tagType) => {
                 return (
                   <li
                     key={tagType}
@@ -112,33 +113,17 @@ export function ProductTagsDropdown({ tags, setTags }: TagProps) {
         {isSubDropdown && selectedTagType && (
           <div className='absolute whitespace-nowrap mt-4 left-44 text-xs md:left-56 bg-white border border-gray-300 md:text-sm rounded-md shadow-lg h-48 overflow-auto w-48'>
             <ul className='mt-2 space-y-1 text-gray-700'>
-              {productTags[selectedTagType].length === 0 ? (
-                <div className='flex flex-col gap-1 px-2 py-1'>
-                  <input
-                    type='text'
-                    placeholder='Add a tag'
-                    className='px-2 py-1 border rounded w-full'
-                    value={otherTag} // controlled value
-                    onChange={handleInputChange} // update the state on input change
-                  />
-                  <button
-                    className='btn-green rounded'
-                    type='button'
-                    onClick={() => {
-                      handleAddTag(otherTag, selectedTagType);
-                    }}>
-                    Add Tag
-                  </button>
-                </div>
-              ) : (
-                productTags[selectedTagType].map((subTag) => (
+              {tagsData[selectedTagType as keyof typeof tagsData]?.map(
+                (subTag) => (
                   <li
-                    key={subTag}
-                    onClick={() => handleAddTag(subTag, selectedTagType)}
+                    key={subTag.id}
+                    onClick={() =>
+                      handleAddTag({ name: subTag.name, id: subTag.id })
+                    }
                     className='px-2 py-1 rounded hover:bg-secondary hover:text-white cursor-pointer'>
-                    {subTag}
+                    {subTag.name}
                   </li>
-                ))
+                )
               )}
             </ul>
           </div>

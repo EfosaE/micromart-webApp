@@ -4,12 +4,15 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import invariant from 'tiny-invariant';
 import dotenv from 'dotenv';
-import axios, { isAxiosError } from 'axios';
+
+
 
 // Load environment variables from .env file
 dotenv.config();
 const app = express();
 invariant(process.env.NEST_API_URL, 'No Base Url found');
+invariant(process.env.REDIS_URL, 'No Redis Url found');
+invariant(process.env.REDIS_PASSWORD, 'checl your env file for passwords');
 const viteDevServer =
   process.env.NODE_ENV === 'production'
     ? null
@@ -40,36 +43,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 // Use cookie-parser middleware
 app.use(cookieParser());
-
-
-// redis
-import { createClient } from 'redis';
-
-export const client = createClient({
-  username: 'default',
-  password: 'nPPIMlMh7RsIbYADQgPTh4jkkxM9ioHE',
-  socket: {
-    host: 'redis-18677.c311.eu-central-1-1.ec2.redns.redis-cloud.com',
-    port: 18677,
-  },
-});
-
-// client.on('error', (err) => console.log('Redis Client Error', err));
-
-(async () => {
-  try {
-    await client.connect();
-    console.log('Connected to Redis');
-    await client.set('foo', 'bar');
-
-    const result = await client.get('foo');
-    console.log(result); // >>> bar
-  } catch (err) {
-    console.error('Failed to connect to Redis:', err);
-  }
-})();
-
-
 
 
 const build = viteDevServer

@@ -95,3 +95,24 @@ export type VendorFormObject = {
   categoryId?: string;
   categoryName?: string
 };
+
+
+
+export interface Tag {
+  id: number;
+  name: string;
+}
+
+
+export interface TagsData {
+  GeneralProductTags: Tag[];
+  AdminTags: Tag[];
+  SeasonalTags: Tag[];
+  CategoryBasedTags: Tag[];
+  ConditionBasedTags: Tag[];
+  PriceBasedTags: Tag[];
+  UsageBasedTags: Tag[];
+  DemographicTags: Tag[];
+  MaterialQualityTags: Tag[];
+  FunctionalTags: Tag[];
+}

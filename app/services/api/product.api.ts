@@ -3,6 +3,7 @@ import { axiosAuthWrapper, axiosInstance } from './axios.server';
 import { isErrorResponse, isSuccessResponse, SuccessResponse } from '~/types';
 import { Category } from '~/components/Categories';
 import { getCategoriesFromCache, setCategoriesInCache } from '~/utils/cache';
+import { RedisClientType } from 'redis';
 
 export const createProduct = catchAsync<
   SuccessResponse,
@@ -74,3 +75,24 @@ export async function getCategories(): Promise<Category[] | null> {
 
   return null;
 }
+
+export const fetchTags = catchAsync<SuccessResponse, [RedisClientType]>(
+  async (client: RedisClientType): Promise<SuccessResponse> => {
+    let data;
+    data = await client.json.get('products:tags');
+    console.log('data from redis');
+    if (!data) {
+      const response = await axiosInstance.get('/api/v1/products/tags');
+
+      await client.json.set('products:tags', '$', response.data);
+
+      console.log('data from BE');
+      data = response.data;
+    }
+
+    return {
+      success: true,
+      data,
+    };
+  }
+);
