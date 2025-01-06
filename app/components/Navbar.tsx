@@ -51,6 +51,12 @@ const Navbar = ({ user }: NavbarProps) => {
             </Link>
           </div>
         </div>
+        <Link
+          to={'/create-product'}
+          className='text-sm hover:text-slate-500 bg-secondary p-2.5 text-white rounded-xl'
+          prefetch='viewport'>
+          Create Product
+        </Link>
       </div>
     </nav>
   );
