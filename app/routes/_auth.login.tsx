@@ -19,6 +19,8 @@ import { createAuthCookie } from '~/services/cookies.server';
 import { createUserSession } from '~/services/session.server';
 import { isErrorResponse, User } from '~/types';
 import { AuthButton } from '~/components/Button';
+import { REDIS_USER_TTL } from '~/utils/constants';
+import { initializeRedis } from '~/services/redis.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -32,7 +34,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const email = formData.get('email')?.toString();
   const password = formData.get('password')?.toString();
   const redirectTo = safeRedirect(formData.get('redirectTo')?.toString(), '/');
-
+  const client = await initializeRedis();
   try {
     // Use zod to validate the form data
     authSchemaWithoutName.parse({ email, password });
@@ -53,10 +55,12 @@ export async function action({ request }: ActionFunctionArgs) {
           console.log('redirectUrl from login:', redirectTo);
 
           // try {
-          //   // If the user does not exist, create the hash for the user
-          //   await client.hSet(`user:${user.id}`, 'name', user.name);
-          //   // Set a TTL (time to live) on the key (e.g., 60 seconds)
-          //   await client.expire(`user:${user.id}`, 60); // TTL in seconds
+          //   // store in redis
+          //   await client.setEx(
+          //     `user:${user.id}`,
+          //     REDIS_USER_TTL,
+          //     JSON.stringify(user)
+          //   );
           // } catch (error) {
           //   console.log(error);
           // }

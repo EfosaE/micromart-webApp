@@ -15,10 +15,11 @@ import stylesheet from '~/tailwind.css?url';
 import Footer from '~/components/Footer';
 import { SnackbarProvider } from 'notistack';
 import Header from './components/Header';
-import { createUserSession, getUser } from './services/session.server';
+import { createUserSession} from './services/session.server';
 import { isUser, isUserWithAccessToken } from './types';
 import Breadcrumbs from './components/Breadcrumbs';
 import { AppButton } from './components/Button';
+import { getUser } from './services/api/user.api';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },

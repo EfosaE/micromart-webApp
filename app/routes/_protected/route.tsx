@@ -1,7 +1,8 @@
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { Link, Outlet, useLoaderData } from '@remix-run/react';
 import MenuComp from '~/components/Menu';
-import { createUserSession, getUser } from '~/services/session.server';
+import { getUser } from '~/services/api/user.api';
+import { createUserSession} from '~/services/session.server';
 import { isUser, isUserWithAccessToken, User } from '~/types';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

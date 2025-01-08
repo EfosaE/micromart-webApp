@@ -96,3 +96,26 @@ export const fetchTags = catchAsync<SuccessResponse, [RedisClientType]>(
     };
   }
 );
+
+export const fetchProducts = catchAsync<SuccessResponse, [RedisClientType]>(
+  async (client: RedisClientType): Promise<SuccessResponse> => {
+    let data;
+    data = await client.json.get('products');
+    console.log(data, 'data from redis');
+    if (!data) {
+      const response = await axiosInstance.get('/api/v1/products');
+
+      await client.json.set('products', '$', response.data);
+      // Set a TTL of 3600 seconds (1 hour) for the key
+      await client.expire('products', 3600);
+
+      console.log(data, 'data from BE');
+      data = response.data;
+    }
+
+    return {
+      success: true,
+      data,
+    };
+  }
+);

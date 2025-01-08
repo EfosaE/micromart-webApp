@@ -1,6 +1,7 @@
 export type User = {
   id: string;
   name: string;
+  activeRole: string;
 };
 export type UserWithAccessToken = {
   accessToken: string;
@@ -93,16 +94,13 @@ export type VendorFormObject = {
   password?: string;
   businessName?: string;
   categoryId?: string;
-  categoryName?: string
+  categoryName?: string;
 };
-
-
 
 export interface Tag {
   id: number;
   name: string;
 }
-
 
 export interface TagsData {
   GeneralProductTags: Tag[];
@@ -116,3 +114,11 @@ export interface TagsData {
   MaterialQualityTags: Tag[];
   FunctionalTags: Tag[];
 }
+
+export type Product = {
+  id: string;
+  name: string;
+  imgUrl: string;
+  price: number;
+  quantity: number;
+};

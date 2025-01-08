@@ -23,13 +23,13 @@
 
 const Footer = () => {
   return (
-    <footer className='bg-secondary font-space text-white py-10'>
+    <footer className='bg-secondary font-space text-white py-10 mt-10'>
       <div className='container'>
         <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
           {/* About Section */}
           <div>
             <h3 className='text-lg font-semibold mb-4'>About MicroMart</h3>
-            <p className='text-sm text-slate-200 text-xs md:text-sm'>
+            <p className='text-slate-200 text-xs md:text-sm'>
               Your Company is a leading e-commerce platform offering a wide
               range of products with the best deals and reliable customer
               support.
@@ -109,14 +109,14 @@ const Footer = () => {
           {/* Newsletter Subscription */}
           <div>
             <h3 className='text-lg font-semibold mb-4'>Connect with Us</h3>
-            <p className='text-sm text-slate-200 text-xs md:text-sm mb-4'>
+            <p className=' text-slate-200 text-xs md:text-sm mb-4'>
               Subscribe to our newsletter for exclusive deals and updates.
             </p>
           </div>
         </div>
 
         {/* Footer Bottom */}
-        <div className='border-t border-slate-200 mt-10 pt-6 text-sm text-slate-100  text-xs md:text-sm text-center container px-12 '>
+        <div className='border-t border-slate-200 mt-10 pt-6 text-slate-100  text-xs md:text-sm text-center container px-12 '>
           <p>
             © {new Date().getFullYear()} Your Company Name. All rights reserved.
           </p>
