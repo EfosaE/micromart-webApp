@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useMatches } from '@remix-run/react';
-import { useEffect } from 'react';
+import Hero from '~/components/Hero';
 import { fetchProducts } from '~/services/api/product.api';
 import { initializeRedis } from '~/services/redis.server';
 import { isErrorResponse, isSuccessResponse, Product } from '~/types';
@@ -38,6 +38,7 @@ export default function Index() {
 
   return (
     <div className='container'>
+      <Hero/>
       <div
         className='md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 flex flex-col'>
         {products!.map((product) => {
@@ -58,7 +59,7 @@ export default function Index() {
                   {product.name}
                 </Link>
                 <p className='text-slate-400 italic text-sm'>No reviews</p>
-                <p>{product.price}</p>
+                <p>₦ {product.price}</p>
               </div>
             </div>
           );

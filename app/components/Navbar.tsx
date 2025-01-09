@@ -5,6 +5,8 @@ import SearchIcon from './icons/SearchIcon';
 import CartIcon from './icons/CartIcon';
 import { User } from '~/types';
 import MenuComp from './Menu';
+import { AppButton } from './Button';
+import Tags from './Tags';
 
 interface NavbarProps {
   /* list of props */
@@ -14,22 +16,24 @@ interface NavbarProps {
 const Navbar = ({ user }: NavbarProps) => {
   console.log(user);
   return (
-    <nav className='py-4'>
-      <div className='container flex flex-col lg:flex-row gap-4 items-center justify-between'>
+    <nav className='sticky top-0 z-10 bg-white'>
+      <div className='container flex flex-col lg:flex-row gap-4 items-center justify-between py-4'>
         <div className='flex items-center gap-2'>
           <img src={logo} alt='Micromart Logo' className='size-10' />
-          <h2 className='text-primary'>MicroMart</h2>
+          <h1 className='text-primary font-semibold text-3xl'>MicroMart</h1>
         </div>
 
-        <div className='relative flex items-center  w-96'>
+        <div className='relative flex items-center gap-1 w-[420px]'>
           <span className='absolute left-2'>
-            <SearchIcon className='text-secondary ' />
+            <SearchIcon className='text-secondary  size-6' />
           </span>
           <input
-            className='bg-tertiary bg-opacity-10 py-3 px-10 focus:border rounded-md w-full  focus:border-secondary focus:outline-none  focus:ring-2 focus:ring-purple-500 placeholder:text-sm placeholder:text-gray-500'
+            className='bg-tertiary bg-opacity-10 py-2 px-10 focus:border rounded-md w-full  focus:border-secondary focus:outline-none  focus:ring-2 focus:ring-purple-500 placeholder:text-sm placeholder:text-gray-500'
             placeholder='search essentials, groceries and more...'
             autoComplete='off'
           />
+
+          <AppButton label={'Search'} />
         </div>
 
         <div className='flex items-center gap-2'>
@@ -52,6 +56,7 @@ const Navbar = ({ user }: NavbarProps) => {
           </div>
         </div>
       </div>
+      <Tags />
     </nav>
   );
 };

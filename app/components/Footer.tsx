@@ -23,7 +23,7 @@
 
 const Footer = () => {
   return (
-    <footer className='bg-secondary font-space text-white py-10 mt-10'>
+    <footer className='bg-primary font-space text-white py-10 mt-10'>
       <div className='container'>
         <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
           {/* About Section */}

@@ -5,6 +5,7 @@ import {
   Outlet,
   redirect,
   Scripts,
+  useLoaderData,
   useLocation,
   useMatches,
   useRouteError,
@@ -16,10 +17,12 @@ import Footer from '~/components/Footer';
 import { SnackbarProvider } from 'notistack';
 import Header from './components/Header';
 import { createUserSession} from './services/session.server';
-import { isUser, isUserWithAccessToken } from './types';
+import { isUser, isUserWithAccessToken, User } from './types';
 import Breadcrumbs from './components/Breadcrumbs';
 import { AppButton } from './components/Button';
 import { getUser } from './services/api/user.api';
+import Navbar from './components/Navbar';
+import Tags from './components/Tags';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -61,9 +64,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   return { user: null };
 };
-
+type LoaderData = {
+  user: User | null
+}
 export default function App() {
-  const matches = useMatches();
+const {user} = useLoaderData<LoaderData>()
   const location = useLocation();
 
   // Check if the current route includes one of the authentication routes
@@ -83,7 +88,9 @@ export default function App() {
         <Links />
       </head>
       <body className=''>
-        {!isAuthPage && <Header />}
+        {!isAuthPage && <Header/>}
+        {!isAuthPage && <Navbar user={user} />}
+
         <Breadcrumbs />
         <SnackbarProvider
           maxSnack={3} // Number of toasts visible at a time
