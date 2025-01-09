@@ -1,9 +1,9 @@
 // @/app/components/Button.ts
-import type { ButtonHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, ReactElement } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   type?: 'submit' | 'reset' | 'button'; // Match the original type
-  label: string;
+   label: string | ReactElement;
 }
 
 export function AuthButton({ label, type, ...props }: ButtonProps) {

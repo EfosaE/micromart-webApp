@@ -16,13 +16,15 @@ import stylesheet from '~/tailwind.css?url';
 import Footer from '~/components/Footer';
 import { SnackbarProvider } from 'notistack';
 import Header from './components/Header';
-import { createUserSession} from './services/session.server';
+import { createUserSession } from './services/session.server';
 import { isUser, isUserWithAccessToken, User } from './types';
 import Breadcrumbs from './components/Breadcrumbs';
 import { AppButton } from './components/Button';
 import { getUser } from './services/api/user.api';
 import Navbar from './components/Navbar';
 import Tags from './components/Tags';
+import { SidebarProvider } from './hooks/SideBarContext';
+import SideBar from './components/SideBar';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -45,7 +47,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUrl = new URL(request.url);
   const redirectTo = currentUrl.pathname + currentUrl.search; // Preserve the path and query parameters
   const response = await getUser(request);
- 
+
   console.log('root loader ran');
   if (isUser(response)) {
     return { user: response };
@@ -65,16 +67,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return { user: null };
 };
 type LoaderData = {
-  user: User | null
-}
+  user: User | null;
+};
 export default function App() {
-const {user} = useLoaderData<LoaderData>()
+  const { user } = useLoaderData<LoaderData>();
   const location = useLocation();
 
   // Check if the current route includes one of the authentication routes
-  const isAuthPage = ['/login', '/register', '/create-product'].some((route) =>
-    location.pathname.includes(route)
-  );
+  const isExemptPage = [
+    '/login',
+    '/register',
+    '/create-product',
+    '/search',
+  ].some((route) => location.pathname.includes(route));
 
   return (
     <html>
@@ -88,8 +93,12 @@ const {user} = useLoaderData<LoaderData>()
         <Links />
       </head>
       <body className=''>
-        {!isAuthPage && <Header/>}
-        {!isAuthPage && <Navbar user={user} />}
+        {!isExemptPage && <Header />}
+        {!isExemptPage && (
+          <SidebarProvider>
+            <Navbar user={user} />
+          </SidebarProvider>
+        )}
 
         <Breadcrumbs />
         <SnackbarProvider
@@ -100,7 +109,7 @@ const {user} = useLoaderData<LoaderData>()
           }}>
           <Outlet />
         </SnackbarProvider>
-        {!isAuthPage && <Footer />}
+        {!isExemptPage && <Footer />}
         <SpeedInsights />
         <Scripts />
       </body>

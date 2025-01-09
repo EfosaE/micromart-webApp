@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react';
+import { Link, useNavigate } from '@remix-run/react';
 import logo from '~/assets/micromart.png';
 import UserIcon from './icons/UserIcon';
 import SearchIcon from './icons/SearchIcon';
@@ -7,6 +7,9 @@ import { User } from '~/types';
 import MenuComp from './Menu';
 import { AppButton } from './Button';
 import Tags from './Tags';
+import Bars from './icons/Bars';
+import { useSidebar } from '~/hooks/SideBarContext';
+import SideBar from './SideBar';
 
 interface NavbarProps {
   /* list of props */
@@ -14,16 +17,41 @@ interface NavbarProps {
 }
 
 const Navbar = ({ user }: NavbarProps) => {
+  const { openSidebar } = useSidebar();
+    const navigate = useNavigate();
   console.log(user);
   return (
     <nav className='sticky top-0 z-10 bg-white'>
-      <div className='container flex flex-col lg:flex-row gap-4 items-center justify-between py-4'>
+     <SideBar user={user} />
+      {/* Mobile NavBar */}
+      <div className='container flex items-center justify-between py-4 lg:hidden'>
+        <div className='flex gap-2 items-center'>
+          <Bars className=' size-6' onClick={openSidebar} />
+          <div className='flex items-center gap-1'>
+            <img src={logo} alt='Micromart Logo' className='size-6' />
+            <h1 className='text-primary font-semibold text-xl'>MicroMart</h1>
+          </div>
+        </div>
+
+        <div className='flex gap-3 items-center text-primary'>
+          <SearchIcon
+            className='size-6'
+            onClick={() => {
+              navigate('/search');
+            }}
+          />
+          <CartIcon className='size-6' />
+        </div>
+      </div>
+
+      {/*Tablets and Above NavBar */}
+      <div className='container hidden lg:flex gap-4 items-center justify-between py-4'>
         <div className='flex items-center gap-2'>
           <img src={logo} alt='Micromart Logo' className='size-10' />
           <h1 className='text-primary font-semibold text-3xl'>MicroMart</h1>
         </div>
 
-        <div className='relative flex items-center gap-1 w-[420px]'>
+        <div className='relative flex   flex-col md:flex-row items-center gap-1 w-[420px]'>
           <span className='absolute left-2'>
             <SearchIcon className='text-secondary  size-6' />
           </span>
@@ -37,7 +65,7 @@ const Navbar = ({ user }: NavbarProps) => {
         </div>
 
         <div className='flex items-center gap-2'>
-          <div className='flex items-center'>
+          <div className='flex items-center relative'>
             <UserIcon className='text-secondary cursor-pointer hover:text-primary size-6' />
             {user ? (
               <MenuComp user={user} />

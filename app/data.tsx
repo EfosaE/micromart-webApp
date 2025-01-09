@@ -1,3 +1,5 @@
+import SearchIcon from "./components/icons/SearchIcon";
+
 export interface ProductTags {
   GeneralProductTags: string[];
   CategoryBasedTags: string[];
@@ -136,3 +138,25 @@ export const productTags = {
   Others: [],
 };
 
+export const dropDownLinks = [
+  {
+    name: 'Orders',
+    icon: <SearchIcon className="size-6" />,
+    to: '/orders',
+  },
+  {
+    name: 'Inbox',
+    icon: <SearchIcon className="size-6" />,
+    to: '/account/inbox',
+  },
+  {
+    name: 'Vouchers',
+    icon: <SearchIcon className="size-6" />,
+    to: '/account/vouchers',
+  },
+  {
+    name: 'Orders',
+    icon: <SearchIcon className="size-6" />,
+    to: '/orders',
+  },
+];

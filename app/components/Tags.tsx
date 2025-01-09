@@ -1,4 +1,6 @@
-import { ProductTags, productTags } from '~/data';
+import { productTags, ProductTags } from "~/data";
+
+
 
 const Tags = () => {
   return (

@@ -16,7 +16,7 @@ const Header = () => {
   const user = layoutData?.user;
   return (
     <header>
-      <div className='bg-tertiary bg-opacity-20 py-1 flex items-center justify-center'>
+      <div className='hidden md:flex bg-tertiary bg-opacity-20 py-1 items-center justify-center'>
         <Link
           to={'/register/vendor'}
           className='text-primary text-xs underline underline-offset-1'>
