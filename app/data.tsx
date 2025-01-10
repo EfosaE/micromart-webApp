@@ -1,62 +1,11 @@
-import SearchIcon from "./components/icons/SearchIcon";
+import Heart from "./components/icons/Heart";
+import Inbox from "./components/icons/Inbox";
+import Orders from "./components/icons/Orders";
+import Reviews from "./components/icons/Reviews";
+import Store from "./components/icons/Store";
+import Voucher from "./components/icons/Voucher";
 
-export interface ProductTags {
-  GeneralProductTags: string[];
-  CategoryBasedTags: string[];
-  ConditionBasedTags: string[];
-  SeasonalTags: string[];
-  PriceBasedTags: string[];
-  UsageBasedTags: string[];
-  DemographicTags: string[];
-  MaterialQualityTags: string[];
-  Others: string[];
-}
-export enum TagTypes {
-  GeneralProductTags = 'GeneralProductTags',
-  CategoryBasedTags = 'CategoryBasedTags',
-  ConditionBasedTags = 'ConditionBasedTags',
-  SeasonalTags = 'SeasonalTags',
-  PriceBasedTags = 'PriceBasedTags',
-  UsageBasedTags = 'UsageBasedTags',
-  DemographicTags = 'DemographicTags',
-  MaterialQualityTags = 'MaterialQualityTags',
-  Others = 'Others',
-}
-
-export const productTags = {
-  GeneralProductTags: [
-    'New Arrival',
-    'On Sale',
-    'Limited Edition',
-    'Exclusive',
-    'Pre-order',
-    'Clearance',
-    'Bundle Offer',
-    'Flash Deal',
-    "Editor's Pick",
-  ],
-  AdminTags: [
-    'Best Seller',
-    'Trending',
-    'Back in Stock',
-    'Out of Stock',
-    'Top Rated',
-    'Featured Product',
-    'Black Friday',
-    'Cyber Monday',
-    'Holiday Special',
-    'Winter Sale',
-    'Summer Sale',
-    'Christmas Deals',
-    "Valentine's Day Specials",
-    'Back to School Deals',
-    'Easter Specials',
-  ],
-  SeasonalTags: [
-    'Rainy Collection',
-    'Summer Collection',
-  ],
-  CategoryBasedTags: [
+  export const CategoryBasedTags = [
     'Clothing',
     'Shoes & Footwear',
     'Bags',
@@ -67,6 +16,8 @@ export const productTags = {
     'Sports & Outdoors',
     'Toys & Games',
     'Books',
+    'Computers & Accessories',
+    'Phones & Accessories',
     'Health & Wellness',
     'Groceries',
     'Automotive',
@@ -76,87 +27,37 @@ export const productTags = {
     'Furniture',
     'Pet Supplies',
     'Services',
-    'Tools'
-  ],
-  ConditionBasedTags: [
-    'New',
-    'Refurbished',
-    'Used',
-    'Certified Pre-Owned',
-    'Open Box',
-    'Damaged',
-  ],
-  PriceBasedTags: [
-    'Budget-Friendly',
-    'Premium',
-    'Luxury',
-    'Discounted',
-    'Free Delivery',
-  ],
-  UsageBasedTags: [
-    'Eco-Friendly',
-    'Handmade',
-    'Customizable',
-    'Giftable',
-    'Multi-Pack',
-    'Portable',
-    'Rechargeable',
-    'DIY Kit',
-    'Weather Resistant',
-    'Compact Design',
-  ],
-  DemographicTags: [
-    'Men',
-    'Women',
-    'Kids',
-    'Unisex',
-    'Teens',
-    'Baby Essentials',
-    'Senior Friendly',
-  ],
-  MaterialQualityTags: [
-    'Organic',
-    'Vegan',
-    'Sustainable',
-    'Durable',
-    'Lightweight',
-    'Waterproof',
-    'BPA-Free',
-    'Recyclable',
-    'Hypoallergenic',
-    'Rust Resistant',
-  ],
-  FunctionalTags: [
-    'Smart',
-    'Bluetooth Enabled',
-    'Wireless',
-    'Energy Efficient',
-    'Plug & Play',
-    'Multi-Functional',
-    'Ergonomic',
-  ],
-  Others: [],
-};
-
+    'Tools',
+  ];
 export const dropDownLinks = [
   {
     name: 'Orders',
-    icon: <SearchIcon className="size-6" />,
-    to: '/orders',
+    icon: <Orders className='size-6 mr-2' />,
+    to: '/account/orders',
   },
   {
     name: 'Inbox',
-    icon: <SearchIcon className="size-6" />,
+    icon: <Inbox className='size-6 mr-2' />,
     to: '/account/inbox',
   },
   {
     name: 'Vouchers',
-    icon: <SearchIcon className="size-6" />,
+    icon: <Voucher className='size-6 mr-2' />,
     to: '/account/vouchers',
   },
   {
-    name: 'Orders',
-    icon: <SearchIcon className="size-6" />,
+    name: 'Pending Reviews',
+    icon: <Reviews className='size-6 mr-2' />,
     to: '/orders',
+  },
+  {
+    name: 'Saved Products',
+    icon: <Heart className='size-6 mr-2' />,
+    to: '/account/favorites',
+  },
+  {
+    name: 'Followed Vendors',
+    icon: <Store className='size-6 mr-2' />,
+    to: 'account/followed-vendors',
   },
 ];

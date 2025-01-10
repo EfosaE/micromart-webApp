@@ -82,19 +82,17 @@ export async function createUserSession({
   headers.append(
     'Set-Cookie',
     await authSessionStorage.commitSession(authSession, {
-      maxAge: 60 * 20, // 20 minutes = 1200 seconds
+      maxAge: 60 * 60 * 24, // 1 day
     })
   );
 
   headers.append(
     'Set-Cookie',
     await userSessionStorage.commitSession(userSession, {
-      maxAge: 60 * 15, // 15 minutes = 1200 seconds
+      maxAge: 60 * 60 * 12, // 12 hrs
     })
   );
-  headers.append('X-Custom-Header', 'MyCustomHeaderValue');
 
-  console.log(redirectTo, headers);
 
   return redirect(redirectTo, {
     headers,

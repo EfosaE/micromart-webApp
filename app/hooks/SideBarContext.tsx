@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 // Define the shape of the context
 interface SidebarContextType {
@@ -21,7 +21,21 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const openSidebar = () => setIsSidebarOpen(true);
+  // Add or remove the `overflow-hidden` class based on the sidebar state
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    // Cleanup to ensure no leftover class when the component unmounts
+    return () => document.body.classList.remove('overflow-hidden');
+  }, [isSidebarOpen]);
+
+  const openSidebar = () => {
+    setIsSidebarOpen(true);
+  };
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 

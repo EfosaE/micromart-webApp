@@ -1,4 +1,4 @@
-import { createCookie, redirect } from '@remix-run/node'; // or cloudflare/deno
+import { createCookie } from '@remix-run/node'; // or cloudflare/deno
 
 // Utility function to create cookies
 export async function createAuthCookie(
@@ -15,7 +15,6 @@ export async function createAuthCookie(
   // process.env.NODE_ENV === 'production' ? true :
   // Set the expiration dynamically from settings
   const expires = settings.expires ? new Date(settings.expires) : undefined;
-
   // Await the serialized cookie
   const serializedAuthCookie = await cookie.serialize(value, {
     expires: expires,
@@ -24,5 +23,3 @@ export async function createAuthCookie(
 
   return serializedAuthCookie;
 }
-
-

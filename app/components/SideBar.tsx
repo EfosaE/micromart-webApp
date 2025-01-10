@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { useSidebar } from '~/hooks/SideBarContext';
 import XMark from './icons/XMark';
 import { User } from '~/types';
 import { Link } from '@remix-run/react';
 import { dropDownLinks } from '~/data';
+import Chevron from './icons/Chevron';
 interface SideBarProps {
-  /* list of props */
   user: User | null;
 }
 const SideBar = ({ user }: SideBarProps) => {
@@ -27,26 +26,44 @@ const SideBar = ({ user }: SideBarProps) => {
               </Link>
             </div>
           ) : (
-            <Link to={'/login'} className='text-sm'>
-              Sign In/Sign Up
+            <Link
+              to={'/login'}
+              className='text-secondary underline underline-offset-2'>
+              Sign Into Your Account
             </Link>
           )}
         </div>
       </div>
       <div>
-        <div className='bg-slate-300 w-full py-2'>
-          <p className='px-[26px] font-space'>MY ACCOUNT</p>
+        <div className='bg-gray-100 w-full py-2'>
+          <p className='px-[26px] font-space text-sm'>MY ACCOUNT</p>
         </div>
         <ul className='px-[26px]'>
           {dropDownLinks.map((link) => {
             return (
-              <div className='flex items-center'>
-                {link.icon}
-                <Link to={link.to} className='py-3'>{link.name}</Link>
+              <div className='flex items-center justify-between' key={link.name}>
+                <div className='flex items-center'>
+                  {link.icon}
+                  <Link to={link.to} className='py-3 text-sm' onClick={closeSidebar}>
+                    {link.name}
+                  </Link>
+                </div>
+
+                <Chevron className='size-4 -rotate-90' />
               </div>
-            )
+            );
           })}
         </ul>
+      </div>
+
+      <div className='flex-end'>
+        <form action='/logout' method='post'>
+          <button
+            type='submit'
+            className='block p-1.5 w-full text-red-700 text-center'>
+            Log Out
+          </button>
+        </form>
       </div>
     </aside>
   );

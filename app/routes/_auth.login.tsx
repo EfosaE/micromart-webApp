@@ -34,7 +34,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const email = formData.get('email')?.toString();
   const password = formData.get('password')?.toString();
   const redirectTo = safeRedirect(formData.get('redirectTo')?.toString(), '/');
-  const client = await initializeRedis();
+  // const client = await initializeRedis();
   try {
     // Use zod to validate the form data
     authSchemaWithoutName.parse({ email, password });
@@ -43,37 +43,25 @@ export async function action({ request }: ActionFunctionArgs) {
       if (result.success && result.headers) {
         const token: string = result.data.accessToken;
         const user: User = result.data.user;
-        const setCookieHeader = result.headers['set-cookie'];
-        // convert to object
-        if (setCookieHeader) {
-          const parsedCookie = parseCookie(setCookieHeader[0]);
-          const authCookie = await createAuthCookie(
-            parsedCookie.name,
-            parsedCookie.value,
-            parsedCookie.settings
-          );
-          console.log('redirectUrl from login:', redirectTo);
 
-          // try {
-          //   // store in redis
-          //   await client.setEx(
-          //     `user:${user.id}`,
-          //     REDIS_USER_TTL,
-          //     JSON.stringify(user)
-          //   );
-          // } catch (error) {
-          //   console.log(error);
-          // }
+        // try {
+        //   // store in redis
+        //   await client.setEx(
+        //     `user:${user.id}`,
+        //     REDIS_USER_TTL,
+        //     JSON.stringify(user)
+        //   );
+        // } catch (error) {
+        //   console.log(error);
+        // }
 
-          // Redirect with the Set-Cookie header
-          return createUserSession({
-            request,
-            token,
-            redirectTo,
-            authCookie,
-            user,
-          });
-        } // else (no-cookies are sent with the response),
+        // Redirect with the Set-Cookie header
+        return createUserSession({
+          request,
+          token,
+          redirectTo,
+          user,
+        });
       } else if (isErrorResponse(result)) {
         return data(
           { loginError: result.error },
