@@ -3,6 +3,7 @@ import Chevron from './icons/Chevron';
 import { Link } from '@remix-run/react';
 import { useState } from 'react';
 import { dropDownLinks } from '~/data';
+import Pencil from './icons/Pencil';
 interface MenuProps {
   user: User;
 }
@@ -27,7 +28,7 @@ const MenuComp = ({ user }: MenuProps) => {
       <div
         className={`${
           isOpen ? 'absolute ' : 'hidden'
-        } top-7 bg-gray-50  py-1 left-1 w-64 origin-top transition duration-200 ease-out data-[closed]:scale-95 data-[closed]:opacity-0 rounded shadow-lg`}>
+        } top-7 bg-gray-50  py-1 left-1 w-64 origin-top transition duration-200 ease-out rounded shadow-lg`}>
         <ul className=''>
           {dropDownLinks.map((link) => {
             return (
@@ -43,7 +44,8 @@ const MenuComp = ({ user }: MenuProps) => {
           })}
         </ul>
         {user.activeRole === 'VENDOR' && (
-          <div>
+          <div className='flex px-4  gap-0.5 items-center hover:bg-tertiary hover:text-white'>
+            <Pencil className='size-6 mr-2' />
             <Link
               to={'/account/create-product'}
               prefetch='viewport'
@@ -53,11 +55,11 @@ const MenuComp = ({ user }: MenuProps) => {
           </div>
         )}
         <hr className='bg-slate-400 h-[2px]' />
-        <div className='flex items-center justify-center'>
+        <div className='flex items-center justify-center  hover:bg-gray-300'>
           <form action='/logout' method='post'>
             <button
               type='submit'
-              className='block p-1.5 w-full text-sm text-red-700 text-left data-[focus]:bg-secondary decoration-gray-200 decoration-2'>
+              className='block p-1.5 w-full text-sm text-red-700'>
               Sign Out
             </button>
           </form>

@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs } from '@remix-run/node';
 import { useSearchParams, Form } from '@remix-run/react';
-import { AppButton } from '~/components/Button';
+import { Button } from '~/components/Button';
 import SearchIcon from '~/components/icons/SearchIcon';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -26,7 +26,7 @@ export default function SearchPage() {
           placeholder='Search for products, categories, etc.'
           autoFocus
         />
-        <AppButton label={<SearchIcon className='size-6' />} />
+        <Button label={<SearchIcon className='size-6' />} styles={['w-fit']}/>
       </Form>
 
       {/* Optionally render search results */}

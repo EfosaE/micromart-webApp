@@ -6,9 +6,9 @@ import {
   useNavigation,
 } from '@remix-run/react';
 import { Input } from '~/components/Input';
-import { AppButton } from '~/components/Button';
+import { Button } from '~/components/Button';
 import { useEffect, useState } from 'react';
-import ProductTagsDropdown from './products/ProductsTagDropdown';
+import ProductTagsDropdown from './_products/ProductsTagDropdown';
 import { ZodError } from 'zod';
 import { getAccessToken } from '~/services/session.server';
 import { createProduct, fetchTags } from '~/services/api/product.api';
@@ -168,7 +168,7 @@ export default function CreateProduct() {
         <button
           onClick={() => {
             closeSnackbar(snackbarId);
-            // window.location.reload();
+            window.location.reload();
           }}>
           dismiss
         </button>
@@ -311,10 +311,10 @@ export default function CreateProduct() {
           />
         </div>
       )}
-      <AppButton
+      <Button
         label={isSubmitting ? 'Creating...' : 'Create Product'}
         type={'submit'}
-        disabled={isSubmitting}
+        disabled={isSubmitting} styles={['w-fit']}
       />
     </Form>
   );

@@ -1,15 +1,17 @@
-import { Link, useNavigate } from '@remix-run/react';
+import { Link, useFetcher, useNavigate } from '@remix-run/react';
 import logo from '~/assets/micromart.png';
 import UserIcon from './icons/UserIcon';
 import SearchIcon from './icons/SearchIcon';
 import CartIcon from './icons/CartIcon';
 import { User } from '~/types';
 import MenuComp from './Menu';
-import { AppButton } from './Button';
+import { Button } from './Button';
 import Tags from './Tags';
 import Bars from './icons/Bars';
 import { useSidebar } from '~/hooks/SideBarContext';
 import SideBar from './SideBar';
+import { LoaderFunctionArgs } from '@remix-run/node';
+import { useEffect } from 'react';
 
 interface NavbarProps {
   /* list of props */
@@ -17,12 +19,15 @@ interface NavbarProps {
 }
 
 const Navbar = ({ user }: NavbarProps) => {
+  const fetcher = useFetcher<{ success: boolean }>({ key: 'cart-fetcher' });
   const { openSidebar } = useSidebar();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+
+
   console.log(user);
   return (
     <nav className='sticky top-0 z-10 bg-white'>
-     <SideBar user={user} />
+      <SideBar user={user} />
       {/* Mobile NavBar */}
       <div className='container flex items-center justify-between py-4 lg:hidden'>
         <div className='flex gap-2 items-center'>
@@ -61,7 +66,7 @@ const Navbar = ({ user }: NavbarProps) => {
             autoComplete='off'
           />
 
-          <AppButton label={'Search'} />
+          <Button label={'Search'} styles={['w-fit']} />
         </div>
 
         <div className='flex items-center gap-2'>
@@ -76,11 +81,12 @@ const Navbar = ({ user }: NavbarProps) => {
             )}
           </div>
           <div className='bg-gray-400 w-[1px] h-8'></div>
-          <div className='flex items-center gap-1'>
+          <div className='flex items-center gap-1 relative'>
             <CartIcon className='text-secondary cursor-pointer hover:text-primary ' />
             <Link to={'/cart'} className='text-sm hover:text-slate-500'>
               Cart
             </Link>
+            {/* <p className='absolute inset-0'>{fetcher.data?.success}</p> */}
           </div>
         </div>
       </div>

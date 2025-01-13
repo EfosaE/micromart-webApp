@@ -18,7 +18,7 @@ import { parseCookie } from '~/utils/cookieUtils';
 import { createAuthCookie } from '~/services/cookies.server';
 import { createUserSession } from '~/services/session.server';
 import { isErrorResponse, User } from '~/types';
-import { AuthButton } from '~/components/Button';
+import { Button } from '~/components/Button';
 import { REDIS_USER_TTL } from '~/utils/constants';
 import { initializeRedis } from '~/services/redis.server';
 
@@ -150,10 +150,10 @@ export default function LoginForm() {
       />
 
       <input type='hidden' name='redirectTo' value={redirectTo} />
-      <AuthButton
+      <Button
         label={isSubmitting ? 'Logging in...' : 'Sign In'}
         type={'submit'}
-        disabled={isSubmitting}
+        disabled={isSubmitting} styles={['w-full']}
       />
     </Form>
   );

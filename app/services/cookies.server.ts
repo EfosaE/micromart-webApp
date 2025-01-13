@@ -23,3 +23,8 @@ export async function createAuthCookie(
 
   return serializedAuthCookie;
 }
+
+
+export const cartCookie = createCookie('cart', {
+  maxAge: 60 * 60 * 24 * 7, // 7 days
+});

@@ -122,3 +122,8 @@ export type Product = {
   price: number;
   quantity: number;
 };
+
+export type Cart = {
+  productId: string;
+  quantity: number;
+};

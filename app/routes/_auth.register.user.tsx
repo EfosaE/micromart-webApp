@@ -15,7 +15,7 @@ import { safeRedirect } from '~/utils/safeRedirect';
 import { signUpUser } from '~/services/api/auth.api';
 import { useSnackbar } from 'notistack';
 import { isErrorResponse } from '~/types';
-import { AuthButton } from '~/components/Button';
+import { Button } from '~/components/Button';
 
 export const meta: MetaFunction = () => [{ title: 'Sign Up' }];
 
@@ -126,10 +126,10 @@ export default function Register() {
       </div>
 
       <input type='hidden' name='redirectTo' value={redirectTo} />
-      <AuthButton
+      <Button
         label={isSubmitting ? 'Please Wait...' : 'Sign Up'}
         type={'submit'}
-        disabled={isSubmitting}
+        disabled={isSubmitting} styles={['w-full']}
       />
 
       <div className='flex items-center'>

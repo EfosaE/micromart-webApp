@@ -5,7 +5,7 @@ import bgLaptopImg from '~/assets/macprobg.jpg';
 import bgApplianceImg from '~/assets/washingmachine.jpg';
 import bgWatchImg from '~/assets/smartwatch.jpg';
 import Chevron from './icons/Chevron';
-import { AppButton } from './Button';
+import { Button } from './Button';
 
 const content = [
   {
@@ -84,25 +84,25 @@ const Hero = () => {
     }
   }, [currentIndex, isAnimating]);
 
-  // // Auto-slide functionality
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     handleNext();
-  //   }, 5000); // Change every 5 seconds
+  // Auto-slide functionality
+  useEffect(() => {
+    const timer = setInterval(() => {
+      handleNext();
+    }, 5000); // Change every 5 seconds
 
-  //   // Cleanup the timer on component unmount
-  //   return () => clearInterval(timer);
-  // }, [currentIndex]);
+    // Cleanup the timer on component unmount
+    return () => clearInterval(timer);
+  }, [currentIndex]);
 
   return (
-    <div className='mb-4 px-4 '>
+    <div className='my-4 px-4 '>
       <div
-        className={`bg-cover bg-center bg-no-repeat h-96 md:h-64 rounded-2xl w-full py-10 px-3 flex justify-start items-center relative
+        className={`bg-cover bg-center bg-no-repeat h-80 rounded-2xl w-full py-10 px-3 flex justify-start items-center relative
         `}
         style={{ backgroundImage: `url(${currentBg})` }}>
         {/* Overlay */}
         <div className='absolute inset-0 bg-black bg-opacity-60 rounded-2xl'></div>
-        <div className='absolute transform left-0  -translate-x-1/2 rotate-90 bg-white p-1.5 rounded-full cursor-pointer'>
+        <div className='absolute transform left-0  -translate-x-1/2 rotate-90 bg-gray-100 p-1.5 rounded-full cursor-pointer'>
           <div
             className='rounded-full p-2 bg-[#F3F9FB] '
             onClick={handlePrevious}>
@@ -122,8 +122,9 @@ const Hero = () => {
           </h1>
           <p className='text-sm md:text-base'>{content[currentIndex].description}</p>
           <div className='flex sm:flex-row flex-col gap-3'>
-            <AppButton label={content[currentIndex].button1} />
-            <AppButton
+            <Button label={content[currentIndex].button1} />
+            <Button
+              styles={['w-fit']}
               label={content[currentIndex].button2}
               className= 'hover:bg-tertiary font-medium rounded-lg text-sm px-5 py-2.5 text-center border border-slate-400'
             />
@@ -131,7 +132,7 @@ const Hero = () => {
           </div>
         </div>
 
-        <div className='bg-white p-1.5 right-0 rounded-full absolute transform translate-x-1/2 -rotate-90 cursor-pointer'>
+        <div className='bg-gray-100  p-1.5 right-0 rounded-full absolute transform translate-x-1/2 -rotate-90 cursor-pointer'>
           <div className=' rounded-full p-2 bg-[#F3F9FB]' onClick={handleNext}>
             <Chevron className='size-6 text-[#008ECC]' />
           </div>

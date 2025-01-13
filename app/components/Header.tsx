@@ -16,10 +16,10 @@ const Header = () => {
   const user = layoutData?.user;
   return (
     <header>
-      <div className='hidden md:flex bg-tertiary bg-opacity-20 py-1 items-center justify-center'>
+      <div className='hidden md:flex bg-tertiary py-1 items-center justify-center'>
         <Link
           to={'/register/vendor'}
-          className='text-primary text-xs underline underline-offset-1'>
+          className='text-white hover:text-slate-400 text-xs underline underline-offset-1'>
           Sell on Micromart
         </Link>
       </div>

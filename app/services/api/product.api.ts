@@ -1,8 +1,18 @@
 import catchAsync from '~/utils/catchAsync';
 import { axiosAuthWrapper, axiosInstance } from './axios.server';
-import { isErrorResponse, isSuccessResponse, SuccessResponse } from '~/types';
+import {
+  isErrorResponse,
+  isSuccessResponse,
+  Product,
+  SuccessResponse,
+} from '~/types';
 import { Category } from '~/components/Categories';
-import { getCategoriesFromCache, setCategoriesInCache } from '~/utils/cache';
+import {
+  getCategoriesFromCache,
+  getProductsFromCache,
+  setCategoriesInCache,
+  setProductsInCache,
+} from '~/utils/cache';
 import { RedisClientType } from 'redis';
 
 export const createProduct = catchAsync<
@@ -29,10 +39,11 @@ export const createProduct = catchAsync<
     };
   }
 );
-
-export const getProducts = catchAsync<SuccessResponse, []>(
-  async (): Promise<SuccessResponse> => {
-    const response = await axiosInstance.get('/api/v1/products');
+export const fetchProductsFromBE = catchAsync<SuccessResponse, [string]>(
+  async (category: string): Promise<SuccessResponse> => {
+    const response = await axiosInstance.get(
+      `/api/v1/products?limit=40&tags=${category}`
+    );
 
     return {
       success: true,
@@ -40,6 +51,31 @@ export const getProducts = catchAsync<SuccessResponse, []>(
     };
   }
 );
+export const getProducts = async (
+  category: string
+): Promise<Product[] | null> => {
+  // Try to get categories from the cache
+  let products = getProductsFromCache(category);
+
+  // console.log('from cache', products);
+  // If categories are not in the cache, fetch them
+  if (!products) {
+    const response = await fetchProductsFromBE(category);
+    // Check if the response is successful and store in cache
+    if (isSuccessResponse(response)) {
+      setProductsInCache(category, response.data.products);
+      products = response.data.products;
+    }
+
+    // If the response is an error, return null
+    if (isErrorResponse(response)) {
+      return null;
+    }
+  }
+  if (products) return products;
+
+  return null;
+};
 
 export const fetchCategories = catchAsync<SuccessResponse, []>(
   async (): Promise<SuccessResponse> => {
@@ -100,17 +136,28 @@ export const fetchTags = catchAsync<SuccessResponse, [RedisClientType]>(
 export const fetchProducts = catchAsync<SuccessResponse, [RedisClientType]>(
   async (client: RedisClientType): Promise<SuccessResponse> => {
     let data;
-    data = await client.json.get('products');
+    data = await client.json.get('products:homepage');
     console.log(data, 'data from redis');
     if (!data) {
-      const response = await axiosInstance.get('/api/v1/products');
-
-      await client.json.set('products', '$', response.data);
+      const phoneResponse = await axiosInstance.get(
+        '/api/v1/products?limit=4&tags=phones'
+      );
+      const computerResponse = await axiosInstance.get(
+        '/api/v1/products?limit=4&tags=computers'
+      );
+      const applianceResponse = await axiosInstance.get(
+        '/api/v1/products?limit=4&tags=appliances'
+      );
+      data = {
+        phones: phoneResponse.data.products,
+        computers: computerResponse.data.products,
+        appliances: applianceResponse.data.products,
+      };
+      await client.json.set('products:homepage', '$', data);
       // Set a TTL of 3600 seconds (1 hour) for the key
-      await client.expire('products', 3600);
+      await client.expire('products:homepage', 3600 * 24 * 2);
 
       console.log(data, 'data from BE');
-      data = response.data;
     }
 
     return {

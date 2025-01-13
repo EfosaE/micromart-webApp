@@ -16,15 +16,16 @@ import stylesheet from '~/tailwind.css?url';
 import Footer from '~/components/Footer';
 import { SnackbarProvider } from 'notistack';
 import Header from './components/Header';
-import { createUserSession } from './services/session.server';
-import { isUser, isUserWithAccessToken, User } from './types';
+import { User } from './types';
 import Breadcrumbs from './components/Breadcrumbs';
-import { AppButton } from './components/Button';
+import { Button } from './components/Button';
 import { getUser } from './services/api/user.api';
 import Navbar from './components/Navbar';
-import Tags from './components/Tags';
 import { SidebarProvider } from './hooks/SideBarContext';
-import SideBar from './components/SideBar';
+
+export let handle = {
+  breadcrumb: () => 'Home',
+};
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -59,7 +60,7 @@ type LoaderData = {
   user: User | null;
 };
 export default function App() {
-  const user  = useLoaderData<User | null>();
+  const user = useLoaderData<User | null>();
   const location = useLocation();
 
   // Check if the current route includes one of the authentication routes
@@ -81,7 +82,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className=''>
+      <body className='bg-gray-100'>
         {!isExemptPage && <Header />}
         {!isExemptPage && (
           <SidebarProvider>
@@ -142,9 +143,9 @@ export function ErrorBoundary() {
         <div className='flex flex-col gap-6 justify-center items-center h-screen w-full'>
           <h1 className='text-red-600'>Error {statusCode}</h1>
           <p className='text-red-700'>{errorMessage}</p>
-          <AppButton
+          <Button
             onClick={() => window.location.reload()}
-            label={'Reload Page'}
+            label={'Reload Page'} styles={['w-fit']}
           />
         </div>
         <Scripts />

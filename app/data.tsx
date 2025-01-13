@@ -5,6 +5,13 @@ import Reviews from "./components/icons/Reviews";
 import Store from "./components/icons/Store";
 import Voucher from "./components/icons/Voucher";
 
+export const sortBy = [
+  { id: 1, name: 'Popularity' },
+  { id: 2, name: 'Newest Arrivals' },
+  { id: 3, name: 'Product Rating' },
+  { id: 4, name: 'Price: Low to High' },
+  { id: 5, name: 'Price: High to Low' },
+];
   export const CategoryBasedTags = [
     'Clothing',
     'Shoes & Footwear',

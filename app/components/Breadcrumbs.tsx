@@ -1,15 +1,15 @@
 // app/components/Breadcrumbs.tsx
-import { UIMatch, useMatches } from '@remix-run/react';
-import { Fragment, HTMLAttributes } from 'react';
+import { UIMatch, useLocation, useMatches } from '@remix-run/react';
+import Chevron from './icons/Chevron';
 
 type BreadcrumbMatch = UIMatch<
   Record<string, unknown>,
   { breadcrumb: (data?: unknown) => string }
 >;
 
-
 export default function Breadcrumbs() {
   const matches = useMatches() as unknown as BreadcrumbMatch[];
+  const location = useLocation();
 
   const breadcrumbs = matches
     .filter((match) => typeof match.handle?.breadcrumb === 'function') // Type guard ensures only matches with a breadcrumb function are considered
@@ -22,16 +22,21 @@ export default function Breadcrumbs() {
     });
 
   return (
-    <nav aria-label='breadcrumb' className='container py-2'>
-      <ol className='flex space-x-2'>
-        {breadcrumbs.map((crumb, index) => (
-          <li key={index}>
-            <a href={crumb.href} className='text-blue-500 hover:underline'>
-              {crumb.label}
-            </a>
-            {index < breadcrumbs.length - 1 && <span> / </span>}
-          </li>
-        ))}
+    <nav aria-label='breadcrumb' className='bg-white'>
+      <ol className='container py-2 flex'>
+        {location.pathname !== '/' &&
+          breadcrumbs.map((crumb, index) => (
+            <li key={index} className='flex'>
+              <a
+                href={crumb.href}
+                className='text-blue-500 text-xs hover:underline'>
+                {crumb.label}
+              </a>
+              {index < breadcrumbs.length - 1 && (
+                <Chevron className='size-4 -rotate-90' />
+              )}
+            </li>
+          ))}
       </ol>
     </nav>
   );

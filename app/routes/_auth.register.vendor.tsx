@@ -17,7 +17,7 @@ import { safeRedirect } from '~/utils/safeRedirect';
 import { signUpUser, signUpVendor } from '~/services/api/auth.api';
 import { useSnackbar } from 'notistack';
 import { isErrorResponse, isSuccessResponse, VendorFormObject } from '~/types';
-import { AuthButton } from '~/components/Button';
+import { Button } from '~/components/Button';
 import Categories, { Category } from '~/components/Categories';
 import { getCategories } from '~/services/api/product.api';
 
@@ -143,10 +143,10 @@ export default function Register() {
 
       <input type='hidden' name='redirectTo' value={redirectTo} />
       <input type='hidden' name='role' value='VENDOR' />
-      <AuthButton
+      <Button
         label={isSubmitting ? 'Please Wait...' : 'Sign Up'}
         type={'submit'}
-        disabled={isSubmitting}
+        disabled={isSubmitting} styles={['w-full']}
       />
     </Form>
   );

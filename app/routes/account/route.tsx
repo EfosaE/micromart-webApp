@@ -28,7 +28,6 @@ const ProtectedLayout = () => {
 
   return (
     <main className='container'>
-      <MenuComp user={user} />
       <Outlet />
     </main>
   );
