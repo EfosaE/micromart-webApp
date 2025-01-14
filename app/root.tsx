@@ -116,9 +116,9 @@ export function ErrorBoundary() {
   console.error(error);
   let errorMessage = 'An unexpected error occurred. Please try again later.';
   let statusCode = 500;
-  if (error instanceof Error) {
-    errorMessage = error.message.split('\n')[0];
-  }
+ 
+
+
   // Check if the error is a response error
   if (isRouteErrorResponse(error)) {
     statusCode = error.status;
@@ -129,7 +129,16 @@ export function ErrorBoundary() {
       errorMessage = error.statusText || errorMessage;
     }
   } else if (error instanceof Error) {
+    errorMessage = error.message.split('\n')[0];
     // Handle other types of network errors
+    // Customize message for 504 Gateway Timeout
+    if (
+      error?.message?.includes('Gateway Timeout') ||
+      error.message.includes('Unable to decode turbo-stream response')
+    ) {
+      errorMessage = 'The server is warming up. Please reload the page.';
+      statusCode = 504;
+    }
     if (error.message.includes('Network request failed')) {
       errorMessage =
         'The server took too long to respond. Please reload the page.';
