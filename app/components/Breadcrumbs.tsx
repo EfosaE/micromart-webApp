@@ -29,7 +29,11 @@ export default function Breadcrumbs() {
             <li key={index} className='flex'>
               <a
                 href={crumb.href}
-                className='text-blue-500 text-xs hover:underline'>
+                className={`text-xs hover:underline ${
+                  index === breadcrumbs.length - 1
+                    ? 'text-gray-600 pointer-events-none'
+                    : 'text-blue-500 '
+                }`}>
                 {crumb.label}
               </a>
               {index < breadcrumbs.length - 1 && (

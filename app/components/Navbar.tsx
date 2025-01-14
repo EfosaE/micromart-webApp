@@ -3,7 +3,7 @@ import logo from '~/assets/micromart.png';
 import UserIcon from './icons/UserIcon';
 import SearchIcon from './icons/SearchIcon';
 import CartIcon from './icons/CartIcon';
-import { User } from '~/types';
+import { Product, User } from '~/types';
 import MenuComp from './Menu';
 import { Button } from './Button';
 import Tags from './Tags';
@@ -16,13 +16,12 @@ import { useEffect } from 'react';
 interface NavbarProps {
   /* list of props */
   user: User | null;
+  cart: Product[] | null;
 }
 
-const Navbar = ({ user }: NavbarProps) => {
-  const fetcher = useFetcher<{ success: boolean }>({ key: 'cart-fetcher' });
+const Navbar = ({ user, cart }: NavbarProps) => {
   const { openSidebar } = useSidebar();
   const navigate = useNavigate();
-
 
   console.log(user);
   return (
@@ -40,12 +39,19 @@ const Navbar = ({ user }: NavbarProps) => {
 
         <div className='flex gap-3 items-center text-primary'>
           <SearchIcon
-            className='size-6'
+            className='size-8'
             onClick={() => {
               navigate('/search');
             }}
           />
-          <CartIcon className='size-6' />
+          <div className='relative'>
+            <CartIcon className='size-8' />
+            {cart && cart.length > 0 && (
+              <p className='absolute -top-1 -right-1.5 text-white bg-secondary rounded-full text-[12px] flex items-center justify-center w-6 h-6'>
+                {cart.reduce((total, item) => total + item.quantity, 0)}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -81,12 +87,20 @@ const Navbar = ({ user }: NavbarProps) => {
             )}
           </div>
           <div className='bg-gray-400 w-[1px] h-8'></div>
-          <div className='flex items-center gap-1 relative'>
+          <div
+            className='flex items-center gap-1 relative'
+            onClick={() => {
+              navigate('/cart');
+            }}>
             <CartIcon className='text-secondary cursor-pointer hover:text-primary ' />
             <Link to={'/cart'} className='text-sm hover:text-slate-500'>
               Cart
             </Link>
-            {/* <p className='absolute inset-0'>{fetcher.data?.success}</p> */}
+            {cart && cart.length > 0 && (
+              <p className='text-white bg-secondary rounded-full text-xs flex items-center justify-center w-8 h-8'>
+                {cart.reduce((total, item) => total + item.quantity, 0)}
+              </p>
+            )}
           </div>
         </div>
       </div>

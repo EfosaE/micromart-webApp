@@ -137,7 +137,7 @@ export const fetchProducts = catchAsync<SuccessResponse, [RedisClientType]>(
   async (client: RedisClientType): Promise<SuccessResponse> => {
     let data;
     data = await client.json.get('products:homepage');
-    console.log(data, 'data from redis');
+    console.log( 'data gotten from redis');
     if (!data) {
       const phoneResponse = await axiosInstance.get(
         '/api/v1/products?limit=4&tags=phones'
@@ -155,9 +155,10 @@ export const fetchProducts = catchAsync<SuccessResponse, [RedisClientType]>(
       };
       await client.json.set('products:homepage', '$', data);
       // Set a TTL of 3600 seconds (1 hour) for the key
-      await client.expire('products:homepage', 3600 * 24 * 2);
+      const result = await client.expire('products:homepage', 864000);
+      console.log('Expire result:', result); // 1 for success, 0 for failure
 
-      console.log(data, 'data from BE');
+      console.log('data gotten from BE');
     }
 
     return {

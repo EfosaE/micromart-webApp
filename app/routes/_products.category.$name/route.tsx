@@ -57,14 +57,14 @@ const Products = () => {
       <div className='md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 flex flex-col container my-4'>
         {products &&
           products.map((product) => {
-            const fetcher = useFetcher<{ success: boolean }>({key: "cart-fetcher"}); 
+            const fetcher = useFetcher<{ success: boolean }>();
             const isSubmitting = fetcher.state === 'submitting';
             useEffect(() => {
-              console.log(fetcher.data)
+              console.log(fetcher.data);
               const action = (snackbarId: SnackbarKey | undefined) => (
                 <div className='flex gap-2 text-xs'>
                   <Link
-                    to={'/'}
+                    to={'/cart'}
                     onClick={() => {
                       closeSnackbar(snackbarId);
                     }}>
@@ -73,7 +73,6 @@ const Products = () => {
                   <button
                     onClick={() => {
                       closeSnackbar(snackbarId);
-                      window.location.reload();
                     }}>
                     Dismiss
                   </button>
@@ -83,13 +82,20 @@ const Products = () => {
                 enqueueSnackbar(`${product.name} added to cart!`, {
                   variant: 'success',
                   action,
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
                 });
               }
               if (fetcher.data && !fetcher.data.success) {
                 enqueueSnackbar(`Failed to add ${product.name} to cart.`, {
                   variant: 'error',
                   action,
-                  persist: true,
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
                 });
               }
             }, [fetcher.data, product.name]);
@@ -116,8 +122,11 @@ const Products = () => {
                       type='hidden'
                       name='cartItem'
                       value={JSON.stringify({
-                        productId: product.id,
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
                         quantity: 1,
+                        imgUrl: product.imgUrl
                       })}
                     />
                     <Button

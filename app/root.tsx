@@ -16,12 +16,13 @@ import stylesheet from '~/tailwind.css?url';
 import Footer from '~/components/Footer';
 import { SnackbarProvider } from 'notistack';
 import Header from './components/Header';
-import { User } from './types';
+import { Product, User } from './types';
 import Breadcrumbs from './components/Breadcrumbs';
 import { Button } from './components/Button';
 import { getUser } from './services/api/user.api';
 import Navbar from './components/Navbar';
 import { SidebarProvider } from './hooks/SideBarContext';
+import { getCartInfo } from './services/session.server';
 
 export let handle = {
   breadcrumb: () => 'Home',
@@ -48,19 +49,22 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUrl = new URL(request.url);
   const redirectTo = currentUrl.pathname + currentUrl.search; // Preserve the path and query parameters
   const user = await getUser(request);
+  const cart = await getCartInfo(request);
 
-  console.log('root loader ran');
+  // console.log('root loader ran', user, cart);
   if (user) {
-    return user;
+    return { user, cart };
   }
 
-  return null;
+  return { user: null, cart };
 };
+
 type LoaderData = {
   user: User | null;
+  cart: Product[] | null;
 };
 export default function App() {
-  const user = useLoaderData<User | null>();
+  const { user, cart } = useLoaderData<LoaderData>();
   const location = useLocation();
 
   // Check if the current route includes one of the authentication routes
@@ -86,11 +90,11 @@ export default function App() {
         {!isExemptPage && <Header />}
         {!isExemptPage && (
           <SidebarProvider>
-            <Navbar user={user} />
+            <Navbar user={user} cart={cart} />
           </SidebarProvider>
         )}
 
-        <Breadcrumbs />
+        {!isExemptPage && <Breadcrumbs />}
         <SnackbarProvider
           maxSnack={3} // Number of toasts visible at a time
           anchorOrigin={{
@@ -145,7 +149,8 @@ export function ErrorBoundary() {
           <p className='text-red-700'>{errorMessage}</p>
           <Button
             onClick={() => window.location.reload()}
-            label={'Reload Page'} styles={['w-fit']}
+            label={'Reload Page'}
+            styles={['w-fit']}
           />
         </div>
         <Scripts />

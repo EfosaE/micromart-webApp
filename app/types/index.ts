@@ -123,7 +123,7 @@ export type Product = {
   quantity: number;
 };
 
-export type Cart = {
-  productId: string;
-  quantity: number;
-};
+// export type Cart = {
+//   productId: string;
+//   quantity: number;
+// };

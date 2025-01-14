@@ -7,14 +7,12 @@ import invariant from 'tiny-invariant';
 import { getNewToken, getUserProfile } from './api/auth.api';
 import {
   isUser,
-  SuccessResponse,
+
   User,
-  ErrorResponse,
-  isSuccessResponse,
-  isErrorResponse,
-  isUserWithAccessToken,
+
 } from '~/types';
-import { initializeRedis } from './redis.server';
+import { cartCookie } from './cookies.server';
+
 
 invariant(process.env.USER_SESSION_SECRET, 'USER_SESSION_SECRET must be set');
 invariant(process.env.AUTH_SESSION_SECRET, 'AUTH_SESSION_SECRET must be set');
@@ -106,6 +104,11 @@ export async function getAccessToken(request: Request) {
   return access_token;
 }
 
+export async function getCartInfo(request: Request) {
+    const cookieHeader = request.headers.get('Cookie');
+  const cart = (await cartCookie.parse(cookieHeader));
+  return cart
+}
 
 export async function getUserDataFromSession(
   request: Request
