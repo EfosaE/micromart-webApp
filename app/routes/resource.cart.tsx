@@ -36,7 +36,8 @@ export const action = async ({ request }: { request: Request }) => {
       updatedCart = updatedCart.filter((item) => item.id !== cartItem.id);
       console.log('Item Removed:', updatedCart);
       break;
-
+    case 'save':
+      return  updatedCart;
     default:
       // Add new item or update quantity
       const existingItem = updatedCart.find((item) => item.id === cartItem.id);

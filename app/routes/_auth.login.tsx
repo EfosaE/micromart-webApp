@@ -19,8 +19,7 @@ import { createAuthCookie } from '~/services/cookies.server';
 import { createUserSession } from '~/services/session.server';
 import { isErrorResponse, User } from '~/types';
 import { Button } from '~/components/Button';
-import { REDIS_USER_TTL } from '~/utils/constants';
-import { initializeRedis } from '~/services/redis.server';
+
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);

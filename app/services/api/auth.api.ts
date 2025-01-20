@@ -41,12 +41,11 @@ export const loginUser = catchAsync(async (userData: GetUserByEmailAuth) => {
 });
 
 export const getUserProfile = catchAsync<SuccessResponse, [string]>(
-  async (access_token: string): Promise<SuccessResponse> => {
-    console.log('BE called !!!');
+  async (accessToken: string): Promise<SuccessResponse> => {
 
     const response = await axiosAuthWrapper(
-      access_token,
-      '/api/v1/auth/profile',
+      accessToken,
+      '/api/v1/users/profile',
       'GET'
     );
 
