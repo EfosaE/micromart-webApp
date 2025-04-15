@@ -11,8 +11,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
 invariant(process.env.NEST_API_URL, 'No Base Url found');
-invariant(process.env.REDIS_URL, 'No Redis Url found');
-invariant(process.env.REDIS_PASSWORD, 'checl your env file for passwords');
+// invariant(process.env.REDIS_URL, 'No Redis Url found');
+// invariant(process.env.REDIS_PASSWORD, 'checl your env file for passwords');
 const viteDevServer =
   process.env.NODE_ENV === 'production'
     ? null
