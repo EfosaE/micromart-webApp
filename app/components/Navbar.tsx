@@ -3,7 +3,7 @@ import logo from '~/assets/micromart.png';
 import UserIcon from './icons/UserIcon';
 import SearchIcon from './icons/SearchIcon';
 import CartIcon from './icons/CartIcon';
-import { Product, User } from '~/types';
+import { CartItem, Product, User } from '~/types';
 import MenuComp from './Menu';
 import { Button } from './Button';
 import Tags from './Tags';
@@ -16,7 +16,7 @@ import { useEffect } from 'react';
 interface NavbarProps {
   /* list of props */
   user: User | null;
-  cart: Product[] | null;
+  cart: CartItem[] | null;
 }
 
 const Navbar = ({ user, cart }: NavbarProps) => {
@@ -48,7 +48,7 @@ const Navbar = ({ user, cart }: NavbarProps) => {
             <CartIcon className='size-8' />
             {cart && cart.length > 0 && (
               <p className='absolute -top-1 -right-1.5 text-white bg-secondary rounded-full text-[12px] flex items-center justify-center w-6 h-6'>
-                {cart.reduce((total, item) => total + item.quantity, 0)}
+                {cart.reduce((total, item) => total + item.cartQuantity, 0)}
               </p>
             )}
           </div>
@@ -98,7 +98,7 @@ const Navbar = ({ user, cart }: NavbarProps) => {
             </Link>
             {cart && cart.length > 0 && (
               <p className='text-white bg-secondary rounded-full text-xs flex items-center justify-center w-8 h-8'>
-                {cart.reduce((total, item) => total + item.quantity, 0)}
+                {cart.reduce((total, item) => total + item.cartQuantity, 0)}
               </p>
             )}
           </div>

@@ -1,19 +1,19 @@
-import catchAsync from '~/utils/catchAsync';
-import { axiosAuthWrapper, axiosInstance } from './axios.server';
+import catchAsync from "~/utils/catchAsync";
+import { axiosAuthWrapper, axiosInstance } from "./axios.server";
 import {
   isErrorResponse,
   isSuccessResponse,
   Product,
   SuccessResponse,
-} from '~/types';
-import { Category } from '~/components/Categories';
+} from "~/types";
+import { Category } from "~/components/Categories";
 import {
   getCategoriesFromCache,
   getProductsFromCache,
   setCategoriesInCache,
   setProductsInCache,
-} from '~/utils/cache';
-import { RedisClientType } from 'redis';
+} from "~/utils/cache";
+import { RedisClientType } from "redis";
 
 export const createProduct = catchAsync<
   SuccessResponse,
@@ -26,8 +26,8 @@ export const createProduct = catchAsync<
   ): Promise<SuccessResponse> => {
     const response = await axiosAuthWrapper(
       accessToken,
-      '/api/v1/products/',
-      'POST',
+      "/api/v1/products/",
+      "POST",
       formData,
       customHeaders // Passing custom headers here
     );
@@ -79,7 +79,7 @@ export const getProducts = async (
 
 export const fetchCategories = catchAsync<SuccessResponse, []>(
   async (): Promise<SuccessResponse> => {
-    const response = await axiosInstance.get('/api/v1/products/categories');
+    const response = await axiosInstance.get("/api/v1/products/categories");
 
     return {
       success: true,
@@ -115,14 +115,14 @@ export async function getCategories(): Promise<Category[] | null> {
 export const fetchTags = catchAsync<SuccessResponse, [RedisClientType]>(
   async (client: RedisClientType): Promise<SuccessResponse> => {
     let data;
-    data = await client.json.get('products:tags');
-    console.log('data from redis');
+    data = await client.json.get("products:tags");
+    console.log("data from redis");
     if (!data) {
-      const response = await axiosInstance.get('/api/v1/products/tags');
+      const response = await axiosInstance.get("/api/v1/products/tags");
 
-      await client.json.set('products:tags', '$', response.data);
+      await client.json.set("products:tags", "$", response.data);
 
-      console.log('data from BE');
+      console.log("data from BE");
       data = response.data;
     }
 
@@ -136,29 +136,29 @@ export const fetchTags = catchAsync<SuccessResponse, [RedisClientType]>(
 export const fetchProducts = catchAsync<SuccessResponse, [RedisClientType]>(
   async (client: RedisClientType): Promise<SuccessResponse> => {
     let data;
-    data = await client.json.get('products:homepage');
-    console.log( 'data gotten from redis');
+    data = await client.json.get("products:homepage");
+    console.log("data gotten from redis");
     if (!data) {
       const phoneResponse = await axiosInstance.get(
-        '/api/v1/products?limit=4&tags=phones'
+        "/api/v1/products?limit=4&tags=phones"
       );
       const computerResponse = await axiosInstance.get(
-        '/api/v1/products?limit=4&tags=computers'
+        "/api/v1/products?limit=4&tags=computers"
       );
       const applianceResponse = await axiosInstance.get(
-        '/api/v1/products?limit=4&tags=appliances'
+        "/api/v1/products?limit=4&tags=appliances"
       );
       data = {
         phones: phoneResponse.data.products,
         computers: computerResponse.data.products,
         appliances: applianceResponse.data.products,
       };
-      await client.json.set('products:homepage', '$', data);
+      await client.json.set("products:homepage", "$", data);
       // Set a TTL of 3600 seconds (1 hour) for the key
-      const result = await client.expire('products:homepage', 864000);
-      console.log('Expire result:', result); // 1 for success, 0 for failure
+      const result = await client.expire("products:homepage", 864000);
+      console.log("Expire result:", result); // 1 for success, 0 for failure
 
-      console.log('data gotten from BE');
+      console.log("data gotten from BE");
     }
 
     return {
@@ -167,3 +167,11 @@ export const fetchProducts = catchAsync<SuccessResponse, [RedisClientType]>(
     };
   }
 );
+
+export const getProductById = catchAsync<SuccessResponse, [string]> (async (id: string): Promise<SuccessResponse> => {
+  const response = await axiosInstance.get(`/api/v1/products/${id}`);
+  return {
+    success: true,
+    data: response.data,
+  };
+});

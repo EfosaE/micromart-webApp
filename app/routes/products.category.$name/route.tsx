@@ -5,20 +5,20 @@ import {
   ListboxButton,
   ListboxOptions,
   ListboxOption,
-} from '@headlessui/react';
-import { data, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Link, useFetcher, useLoaderData } from '@remix-run/react';
-import { useEffect } from 'react';
-import { Button } from '~/components/Button';
-import { getProducts } from '~/services/api/product.api';
-import { isSuccessResponse, isErrorResponse, Product } from '~/types';
-import { capitalizeWord } from '~/utils';
-import CategoryHeader from './CategoryHeader';
-import { SnackbarKey, closeSnackbar, enqueueSnackbar } from 'notistack';
+} from "@headlessui/react";
+import { data, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { Link, useFetcher, useLoaderData } from "@remix-run/react";
+import { useEffect } from "react";
+import { Button } from "~/components/Button";
+import { getProducts } from "~/services/api/product.api";
+import { isSuccessResponse, isErrorResponse, Product } from "~/types";
+import { capitalizeWord } from "~/utils";
+import CategoryHeader from "./CategoryHeader";
+import { SnackbarKey, closeSnackbar, enqueueSnackbar } from "notistack";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data || !data.name) {
-    return [{ title: 'Default Title' }];
+    return [{ title: "Default Title" }];
   }
 
   return [{ title: `Buy your ${capitalizeWord(data.name)}` }];
@@ -33,12 +33,12 @@ export let handle = {
 export async function loader({ params }: LoaderFunctionArgs) {
   const categoryName = params.name;
 
-  const products = await getProducts(categoryName || '');
+  const products = await getProducts(categoryName || "");
   if (products) {
     return { products, name: categoryName };
   }
 
-  return { error: 'Failed to get Prodcuts', name: categoryName };
+  return { error: "Failed to get Prodcuts", name: categoryName };
 }
 
 type LoaderData = {
@@ -54,17 +54,17 @@ const Products = () => {
     <div>
       <CategoryHeader name={name} />
 
-      <div className='md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 flex flex-col container my-4'>
+      <div className="md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 flex flex-col container my-4">
         {products &&
           products.map((product) => {
             const fetcher = useFetcher<{ success: boolean }>();
-            const isSubmitting = fetcher.state === 'submitting';
+            const isSubmitting = fetcher.state === "submitting";
             useEffect(() => {
               console.log(fetcher.data);
               const action = (snackbarId: SnackbarKey | undefined) => (
-                <div className='flex gap-2 text-xs'>
+                <div className="flex gap-2 text-xs">
                   <Link
-                    to={'/cart'}
+                    to={"/cart"}
                     onClick={() => {
                       closeSnackbar(snackbarId);
                     }}>
@@ -80,58 +80,55 @@ const Products = () => {
               );
               if (fetcher.data?.success) {
                 enqueueSnackbar(`${product.name} added to cart!`, {
-                  variant: 'success',
+                  variant: "success",
                   action,
                   anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'left',
+                    vertical: "bottom",
+                    horizontal: "left",
                   },
                 });
               }
               if (fetcher.data && !fetcher.data.success) {
                 enqueueSnackbar(`Failed to add ${product.name} to cart.`, {
-                  variant: 'error',
+                  variant: "error",
                   action,
                   anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'left',
+                    vertical: "bottom",
+                    horizontal: "left",
                   },
                 });
               }
             }, [fetcher.data, product.name]);
 
             return (
-              <div key={product.id} className='hover:shadow-2xl group'>
+              <div key={product.id} className="hover:shadow-2xl group">
                 <div
-                  className='h-64 overflow-clip flex items-center bg-cover bg-center'
+                  className="h-64 overflow-clip flex items-center bg-cover bg-center"
                   style={{ backgroundImage: `url(${product.imgUrl})` }}>
                   {/* Content goes here */}
                 </div>
-                <div className='bg-white px-2.5 py-4 flex flex-col justify-between gap-1 rounded-b-lg '>
+                <div className="bg-white px-2.5 py-4 flex flex-col justify-between gap-1 rounded-b-lg ">
                   <div>
                     <Link
                       to={`${product.id}`}
-                      className='text-primary hover:text-secondary font-space'>
+                      className="text-primary hover:text-secondary font-space">
                       {product.name}
                     </Link>
-                    <p className='text-slate-400 italic text-sm'>No reviews</p>
-                    <p className='text-sm'>₦ {product.price}</p>
+                    <p className="text-slate-400 italic text-sm">No reviews</p>
+                    <p className="text-sm">₦ {product.price}</p>
                   </div>
-                  <fetcher.Form method='post' action='/resource/cart'>
+                  <fetcher.Form method="post" action="/resource/cart">
                     <input
-                      type='hidden'
-                      name='cartItem'
+                      type="hidden"
+                      name="cartItem"
                       value={JSON.stringify({
                         id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        quantity: 1,
-                        imgUrl: product.imgUrl
+                        cartQuantity: 1,
                       })}
                     />
                     <Button
-                      label={isSubmitting ? 'Adding...' : 'Add to cart'}
-                      styles={['w-full']}
+                      label={isSubmitting ? "Adding..." : "Add to cart"}
+                      styles={["w-full"]}
                       disabled={isSubmitting}
                     />
                   </fetcher.Form>
@@ -140,7 +137,7 @@ const Products = () => {
             );
           })}
       </div>
-      {error && <p className='text-red-500'>{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
     </div>
   );
 };

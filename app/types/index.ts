@@ -123,6 +123,14 @@ export type Product = {
   quantity: number;
 };
 
+export type CartItem = Product & {
+  cartQuantity: number;
+  error: false;
+};
+
+
+
+
 // export type Cart = {
 //   productId: string;
 //   quantity: number;

@@ -1,7 +1,7 @@
 import { Button } from '~/components/Button';
-import { Product } from '~/types';
+import { CartItem, Product } from '~/types';
 
-const CartSummary = ({ cart }: { cart: Product[] }) => {
+const CartSummary = ({ cart }: { cart: CartItem[] }) => {
   return (
     <div className='w-1/4 p-2 bg-white h-fit'>
       <p className=' text-gray-700 font-semibold py-2 border-b border-slate-300'>
@@ -11,7 +11,7 @@ const CartSummary = ({ cart }: { cart: Product[] }) => {
         <p>Subtotal</p>
         <p className='font-semibold'>
           ₦{' '}
-          {cart.reduce((total, item) => total + item.quantity * item.price, 0)}
+          {cart.reduce((total, item) => total + item.cartQuantity * item.price, 0)}
         </p>
       </div>
       <Button label={'Proceed To Checkout'} styles={['my-1', 'reounded-sm', 'w-full']} />

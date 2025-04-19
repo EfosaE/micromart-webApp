@@ -4,9 +4,7 @@ import GIcon from '../../assets/search.png'
 import { Button } from '~/components/Button';
 
 const AuthLayout = () => {
-  function handleGoogleApiCall() {
-    
-  }
+
   return (
     <div className='flex flex-col justify-center items-center bg-white'>
       <div className='sm:w-[480px] p-8 w-full min-h-screen flex flex-col items-center justify-center'>
@@ -17,7 +15,6 @@ const AuthLayout = () => {
           action='/google'
           className='w-full  border-2 my-2 flex items-center justify-center rounded-md'>
           <Button
-            onClick={handleGoogleApiCall}
             label={
               <div className='flex gap-2 items-center justify-center'>
                 <img src={GIcon} alt='' className='size-4' />

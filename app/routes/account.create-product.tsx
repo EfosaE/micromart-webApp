@@ -8,7 +8,7 @@ import {
 import { Input } from '~/components/Input';
 import { Button } from '~/components/Button';
 import { useEffect, useState } from 'react';
-import ProductTagsDropdown from './_products/ProductsTagDropdown';
+import ProductTagsDropdown from './products/ProductsTagDropdown';
 import { ZodError } from 'zod';
 import { getAccessToken } from '~/services/session.server';
 import { createProduct, fetchTags } from '~/services/api/product.api';

@@ -16,7 +16,7 @@ const Appliances: React.FC<{
         </p>
         <div className='flex items-center'>
           <Link
-            to={`/category/${urlUtils.createSlug('Appliances')}`}
+            to={`products/category/${urlUtils.createSlug('Appliances')}`}
             className='text-xs'>
             View All
           </Link>
@@ -38,7 +38,7 @@ const Appliances: React.FC<{
                 </div>
                 <div className='bg-white p-2.5 flex flex-col gap-1 shadow-lg rounded-b-lg'>
                   <Link
-                    to={`/products/${appliance.id}`}
+                    to={`products/${appliance.id}`}
                     className='text-primary hover:text-secondary font-space'>
                     {appliance.name}
                   </Link>
