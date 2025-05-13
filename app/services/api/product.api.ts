@@ -79,7 +79,7 @@ export const getProducts = async (
 
 export const fetchCategories = catchAsync<SuccessResponse, []>(
   async (): Promise<SuccessResponse> => {
-    const response = await axiosInstance.get("/api/v1/products/categories");
+    const response = await axiosInstance.get("/api/v1/products/list/categories");
 
     return {
       success: true,
@@ -118,7 +118,7 @@ export const fetchTags = catchAsync<SuccessResponse, [RedisClientType]>(
     data = await client.json.get("products:tags");
     console.log("data from redis");
     if (!data) {
-      const response = await axiosInstance.get("/api/v1/products/tags");
+      const response = await axiosInstance.get("/api/v1/products/list/tags");
 
       await client.json.set("products:tags", "$", response.data);
 
