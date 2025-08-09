@@ -6,7 +6,7 @@ import Computers from "~/components/CategoriesUi/Computers";
 import Phones from "~/components/CategoriesUi/Phones";
 import Hero from "~/components/Hero";
 import { fetchProducts } from "~/services/api/product.api";
-import { initializeRedis } from "~/services/redis.server";
+import { getRedisClient, initializeRedis } from "~/services/redis.server";
 import { isErrorResponse, isSuccessResponse, Product } from "~/types";
 
 type ProductData = {
@@ -40,25 +40,56 @@ async function loadProductsFromApi(client: RedisClientType | null) {
   return { error: "Unknown error occurred" };
 }
 
+// export async function loader() {
+//   try {
+//     const client = await initializeRedis();
+
+//     if (!client) {
+//       const productsPromise = loadProductsFromApi(client);
+
+//       return { productsPromise };
+//     }
+//     const productsPromise = loadProductsFromApi(client);
+
+//     return { productsPromise };
+//   } catch (err) {
+//     console.error("Homepage loader error:", err);
+//     // Pass error message to UI instead of hanging
+//     return { error: "Could not connect to Redis. Please try again later." };
+
+//     // If you prefer to use the root ErrorBoundary:
+//     // throw new Response('Could not connect to Redis', { status: 500 });
+//   }
+// }
+
 export async function loader() {
+  console.log("🏠 Homepage loader started");
+
   try {
-    const client = await initializeRedis();
+    // CRITICAL FIX: Use getRedisClient instead of initializeRedis
+    // getRedisClient has better error handling and won't crash Vercel
+    console.log("🔄 Getting Redis client safely...");
 
-    if (!client) {
-      const productsPromise = loadProductsFromApi(client);
+    const client = await getRedisClient(); // This is the safe version
 
-      return { productsPromise };
-    }
+    console.log("🔄 Redis client result:", client ? "CONNECTED" : "NULL");
+
+    // Always pass the client (even if null) to loadProductsFromApi
+    // Your fetchProducts function already handles null clients gracefully
     const productsPromise = loadProductsFromApi(client);
 
+    console.log("✅ Homepage loader returning products promise");
     return { productsPromise };
   } catch (err) {
-    console.error("Homepage loader error:", err);
-    // Pass error message to UI instead of hanging
-    return { error: "Could not connect to Redis. Please try again later." };
+    console.error("❌ Homepage loader error:", err);
 
-    // If you prefer to use the root ErrorBoundary:
-    // throw new Response('Could not connect to Redis', { status: 500 });
+    // Create a promise that resolves to an error state
+    // This prevents the loader from throwing and crashing Vercel
+    const errorPromise = Promise.resolve({
+      error: "Could not load products. Please try refreshing the page.",
+    });
+
+    return { productsPromise: errorPromise };
   }
 }
 
