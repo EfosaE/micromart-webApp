@@ -112,18 +112,26 @@ export async function getCategories(): Promise<Category[] | null> {
   return null;
 }
 
-export const fetchTags = catchAsync<SuccessResponse, [RedisClientType]>(
-  async (client: RedisClientType): Promise<SuccessResponse> => {
+export const fetchTags = catchAsync<SuccessResponse, [RedisClientType | null]>(
+  async (client: RedisClientType | null): Promise<SuccessResponse> => {
     let data;
-    data = await client.json.get("products:tags");
-    console.log("data from redis");
-    if (!data) {
+
+    if (!client) {
+      // Redis client is null → go straight to API
+      console.log("Redis client is null, fetching from API");
       const response = await axiosInstance.get("/api/v1/products/list/tags");
-
-      await client.json.set("products:tags", "$", response.data);
-
-      console.log("data from BE");
       data = response.data;
+    } else {
+      // Try getting from Redis
+      data = await client.json.get("products:tags");
+      console.log("Fetched data from Redis");
+
+      if (!data) {
+        console.log("No data in Redis, fetching from API");
+        const response = await axiosInstance.get("/api/v1/products/list/tags");
+        await client.json.set("products:tags", "$", response.data);
+        data = response.data;
+      }
     }
 
     return {
@@ -133,32 +141,48 @@ export const fetchTags = catchAsync<SuccessResponse, [RedisClientType]>(
   }
 );
 
-export const fetchProducts = catchAsync<SuccessResponse, [RedisClientType]>(
-  async (client: RedisClientType): Promise<SuccessResponse> => {
+
+export const fetchProducts = catchAsync<SuccessResponse, [RedisClientType | null]>(
+  async (client: RedisClientType | null): Promise<SuccessResponse> => {
     let data;
-    data = await client.json.get("products:homepage");
-    console.log("data gotten from redis");
+
+    if (client) {
+      try {
+        data = await client.json.get("products:homepage");
+        if (data) {
+          console.log("Data gotten from Redis");
+        }
+      } catch (err) {
+        console.error("Redis read error:", err);
+      }
+    }
+
+    // If no Redis or no cached data, fetch fresh from API
     if (!data) {
-      const phoneResponse = await axiosInstance.get(
-        "/api/v1/products?limit=4&tags=phones"
-      );
-      const computerResponse = await axiosInstance.get(
-        "/api/v1/products?limit=4&tags=computers"
-      );
-      const applianceResponse = await axiosInstance.get(
-        "/api/v1/products?limit=4&tags=appliances"
-      );
+      console.log("Fetching products from API...");
+      const [phoneResponse, computerResponse, applianceResponse] = await Promise.all([
+        axiosInstance.get("/api/v1/products?limit=4&tags=phones"),
+        axiosInstance.get("/api/v1/products?limit=4&tags=computers"),
+        axiosInstance.get("/api/v1/products?limit=4&tags=appliances"),
+      ]);
+
       data = {
         phones: phoneResponse.data.products,
         computers: computerResponse.data.products,
         appliances: applianceResponse.data.products,
       };
-      await client.json.set("products:homepage", "$", data);
-      // Set a TTL of 3600 seconds (1 hour) for the key
-      const result = await client.expire("products:homepage", 864000);
-      console.log("Expire result:", result); // 1 for success, 0 for failure
 
-      console.log("data gotten from BE");
+      console.log("homepage", data)
+
+      if (client !== null) {
+        try {
+          await client.json.set("products:homepage", "$", data);
+          const result = await client.expire("products:homepage", 864000); // 10 days
+          console.log("Cached products in Redis, expire result:", result);
+        } catch (err) {
+          console.error("Redis write error:", err);
+        }
+      }
     }
 
     return {
@@ -167,6 +191,7 @@ export const fetchProducts = catchAsync<SuccessResponse, [RedisClientType]>(
     };
   }
 );
+
 
 export const getProductById = catchAsync<SuccessResponse, [string]> (async (id: string): Promise<SuccessResponse> => {
   const response = await axiosInstance.get(`/api/v1/products/${id}`);
