@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react';
+import { Link } from 'react-router';
 import Chevron from '../icons/Chevron';
 import { Product } from '~/types';
 import { urlUtils } from '~/utils/url.util';

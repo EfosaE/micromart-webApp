@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, redirect } from '@remix-run/node';
+import { LoaderFunctionArgs, redirect } from 'react-router';
 import { getUserProfile } from '~/services/api/auth.api';
 import { createUserSession } from '~/services/session.server';
 import { isErrorResponse, isSuccessResponse, User } from '~/types';

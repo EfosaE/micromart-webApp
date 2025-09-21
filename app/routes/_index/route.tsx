@@ -1,4 +1,4 @@
-import { Await, Link, useLoaderData, useMatches } from "@remix-run/react";
+import { Await, Link, useLoaderData, useMatches } from "react-router";
 import { Suspense, useEffect } from "react";
 import { RedisClientType } from "redis";
 import Appliances from "~/components/CategoriesUi/Appliances";
@@ -139,7 +139,7 @@ function ProductsContent({
   };
 }) {
   const { phones, computers, appliances, error } = productsData;
-
+  console.log(error);
   if (error) {
     return (
       <div className="mt-8">

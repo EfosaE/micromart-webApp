@@ -1,4 +1,4 @@
-import { createRequestHandler } from '@remix-run/express';
+import { createRequestHandler } from '@react-router/express';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -46,12 +46,12 @@ app.use(cookieParser());
 
 
 const build = viteDevServer
-  ? () => viteDevServer.ssrLoadModule('virtual:remix/server-build')
+  ? () => viteDevServer.ssrLoadModule('virtual:react-router/server-build')
   : await import('./build/server/index.js');
 
 // and your app is "just a request handler"
 app.all('*', createRequestHandler({ build }));
 
-app.listen(3050, () => {
-  console.log('App listening on http://localhost:3050');
+app.listen(3000, () => {
+  console.log('App listening on http://localhost:3000');
 });

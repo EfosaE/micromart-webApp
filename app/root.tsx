@@ -7,9 +7,9 @@ import {
   useLoaderData,
   useLocation,
   useRouteError,
-} from '@remix-run/react';
-import { SpeedInsights } from '@vercel/speed-insights/remix';
-import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
+} from 'react-router';
+// import { SpeedInsights } from '@vercel/speed-insights/remix';
+import type { LinksFunction, LoaderFunctionArgs } from 'react-router';
 import stylesheet from '~/tailwind.css?url';
 import Footer from '~/components/Footer';
 import { SnackbarProvider } from 'notistack';
@@ -85,55 +85,55 @@ export default function App() {
           <Outlet />
         </SnackbarProvider>
         {!isExemptPage && <Footer />}
-        <SpeedInsights />
+        {/* <SpeedInsights /> */}
         <Scripts />
       </body>
     </html>
   );
 }
 
-export function ErrorBoundary() {
-  const error = useRouteError();
-  console.error(error);
+// export function ErrorBoundary() {
+//   const error = useRouteError();
+//   console.error(error);
 
-  let errorMessage = 'An unexpected error occurred. Please try again later.';
-  let statusCode = 500;
+//   let errorMessage = 'An unexpected error occurred. Please try again later.';
+//   let statusCode = 500;
 
-  if (isRouteErrorResponse(error)) {
-    statusCode = error.status;
-    errorMessage = error.statusText || errorMessage;
-    if (statusCode === 504) {
-      errorMessage = 'The server took too long to respond. Please reload the page.';
-    }
-  } else if (error instanceof Error) {
-    errorMessage = error.message.split('\n')[0];
-    if (
-      error.message.includes('Gateway Timeout') ||
-      error.message.includes('Unable to decode turbo-stream response')
-    ) {
-      errorMessage = 'The server is warming up. Please reload the page.';
-      statusCode = 504;
-    }
-    if (error.message.includes('Network request failed')) {
-      errorMessage = 'The server took too long to respond. Please reload the page.';
-    }
-  }
+//   if (isRouteErrorResponse(error)) {
+//     statusCode = error.status;
+//     errorMessage = error.statusText || errorMessage;
+//     if (statusCode === 504) {
+//       errorMessage = 'The server took too long to respond. Please reload the page.';
+//     }
+//   } else if (error instanceof Error) {
+//     errorMessage = error.message.split('\n')[0];
+//     if (
+//       error.message.includes('Gateway Timeout') ||
+//       error.message.includes('Unable to decode turbo-stream response')
+//     ) {
+//       errorMessage = 'The server is warming up. Please reload the page.';
+//       statusCode = 504;
+//     }
+//     if (error.message.includes('Network request failed')) {
+//       errorMessage = 'The server took too long to respond. Please reload the page.';
+//     }
+//   }
 
-  return (
-    <html>
-      <head>
-        <title>Error {statusCode}</title>
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <div className="flex flex-col gap-6 justify-center items-center h-screen w-full">
-          <h1 className="text-red-600">Error {statusCode}</h1>
-          <p className="text-red-700">{errorMessage}</p>
-          <Button onClick={() => window.location.reload()} label="Reload Page" styles={['w-fit']} />
-        </div>
-        <Scripts />
-      </body>
-    </html>
-  );
-}
+//   return (
+//     <html>
+//       <head>
+//         <title>Error {statusCode}</title>
+//         <Meta />
+//         <Links />
+//       </head>
+//       <body>
+//         <div className="flex flex-col gap-6 justify-center items-center h-screen w-full">
+//           <h1 className="text-red-600">Error {statusCode}</h1>
+//           <p className="text-red-700">{errorMessage}</p>
+//           <Button onClick={() => window.location.reload()} label="Reload Page" styles={['w-fit']} />
+//         </div>
+//         <Scripts />
+//       </body>
+//     </html>
+//   );
+// }

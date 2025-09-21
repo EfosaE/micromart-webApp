@@ -1,5 +1,5 @@
 // app/components/Breadcrumbs.tsx
-import { UIMatch, useLocation, useMatches } from '@remix-run/react';
+import { UIMatch, useLocation, useMatches } from 'react-router';
 import Chevron from './icons/Chevron';
 
 type BreadcrumbMatch = UIMatch<

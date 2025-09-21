@@ -1,7 +1,7 @@
 import { useSidebar } from '~/hooks/SideBarContext';
 import XMark from './icons/XMark';
 import { User } from '~/types';
-import { Link } from '@remix-run/react';
+import { Link } from 'react-router';
 import { dropDownLinks } from '~/data';
 import Chevron from './icons/Chevron';
 interface SideBarProps {

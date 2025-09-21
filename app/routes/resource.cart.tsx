@@ -1,4 +1,4 @@
-import { data, LoaderFunctionArgs } from '@remix-run/node';
+import { data, LoaderFunctionArgs } from 'react-router';
 import { cartCookie } from '~/services/cookies.server';
 import { getCartInfo } from '~/services/session.server';
 import { CartItem } from '~/types';

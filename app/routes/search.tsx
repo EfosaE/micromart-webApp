@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs } from '@remix-run/node';
-import { useSearchParams, Form } from '@remix-run/react';
+import { LoaderFunctionArgs } from 'react-router';
+import { useSearchParams, Form } from 'react-router';
 import { Button } from '~/components/Button';
 import SearchIcon from '~/components/icons/SearchIcon';
 

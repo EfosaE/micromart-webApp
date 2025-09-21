@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
 import { useState } from "react";
 import { getCartInfo } from "~/services/session.server";
 import { CartItem, isErrorResponse, isSuccessResponse, Product } from "~/types";

@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs, redirect } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
+import { LoaderFunctionArgs, redirect } from 'react-router';
+import { Outlet, useLoaderData } from 'react-router';
 import MenuComp from '~/components/Menu';
 import { getUser } from '~/services/api/user.api';
 import {  User } from '~/types';

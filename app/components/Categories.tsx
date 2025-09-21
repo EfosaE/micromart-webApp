@@ -7,7 +7,7 @@ import {
   ListboxOption,
 } from '@headlessui/react';
 import CheckIcon from './icons/CheckIcon';
-import { Await } from '@remix-run/react';
+import { Await } from 'react-router';
 import { Suspense, useEffect, useState } from 'react';
 
 export interface Category {

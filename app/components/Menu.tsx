@@ -1,6 +1,6 @@
 import { User } from '~/types';
 import Chevron from './icons/Chevron';
-import { Link } from '@remix-run/react';
+import { Link } from 'react-router';
 import { useState } from 'react';
 import { dropDownLinks } from '~/data';
 import Pencil from './icons/Pencil';

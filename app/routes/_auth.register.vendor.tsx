@@ -1,17 +1,10 @@
-import {
-  Await,
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-  useSearchParams,
-} from '@remix-run/react';
-import { data, redirect } from '@remix-run/node';
+import { Await, Form, useActionData, useLoaderData, useNavigation, useSearchParams } from 'react-router';
+import { data, redirect } from 'react-router';
 import { Input } from '~/components/Input';
-import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
+import type { ActionFunctionArgs, MetaFunction } from 'react-router';
 import { authSchema, vendorAuthSchema } from '~/utils/validation';
 import { ZodError } from 'zod';
-import type { HeadersFunction } from '@remix-run/node'; // or cloudflare/deno
+import type { HeadersFunction } from 'react-router'; // or cloudflare/deno
 import { Suspense, useEffect, useState } from 'react';
 import { safeRedirect } from '~/utils/safeRedirect';
 import { signUpUser, signUpVendor } from '~/services/api/auth.api';

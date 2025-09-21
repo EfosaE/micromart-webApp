@@ -6,8 +6,8 @@ import {
   ListboxOptions,
   ListboxOption,
 } from "@headlessui/react";
-import { data, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Link, useFetcher, useLoaderData } from "@remix-run/react";
+import { data, LoaderFunctionArgs, MetaFunction } from "react-router";
+import { Link, useFetcher, useLoaderData } from "react-router";
 import { useEffect } from "react";
 import { Button } from "~/components/Button";
 import { getProducts } from "~/services/api/product.api";

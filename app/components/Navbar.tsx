@@ -1,4 +1,4 @@
-import { Link, useFetcher, useNavigate } from '@remix-run/react';
+import { Link, useFetcher, useNavigate } from 'react-router';
 import logo from '~/assets/micromart.png';
 import UserIcon from './icons/UserIcon';
 import SearchIcon from './icons/SearchIcon';
@@ -10,7 +10,7 @@ import Tags from './Tags';
 import Bars from './icons/Bars';
 import { useSidebar } from '~/hooks/SideBarContext';
 import SideBar from './SideBar';
-import { LoaderFunctionArgs } from '@remix-run/node';
+import { LoaderFunctionArgs } from 'react-router';
 import { useEffect } from 'react';
 
 interface NavbarProps {

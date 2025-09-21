@@ -1,13 +1,7 @@
-import {
-  Form,
-  Link,
-  useActionData,
-  useNavigation,
-  useSearchParams,
-} from '@remix-run/react';
-import { data, redirect } from '@remix-run/node';
+import { Form, Link, useActionData, useNavigation, useSearchParams } from 'react-router';
+import { data, redirect } from 'react-router';
 import { Input } from '~/components/Input';
-import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
+import type { ActionFunctionArgs, MetaFunction } from 'react-router';
 import { authSchema } from '~/utils/validation';
 import { ZodError } from 'zod';
 import { useEffect, useState } from 'react';
