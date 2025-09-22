@@ -7,7 +7,7 @@ const CartDiv = ({
   cart: CartItem[];
 }) => {
   const fetcher = useFetcher();
-  console.log(cart);
+  // console.log(cart);
   return (
     <div className="w-3/4 bg-white p-2.5" >
       <p className="text-xl font-bold py-2 border-b border-slate-300">

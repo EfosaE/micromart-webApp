@@ -8,7 +8,9 @@ import {
   useLocation,
   useRouteError,
 } from 'react-router';
-// import { SpeedInsights } from '@vercel/speed-insights/remix';
+// import { injectSpeedInsights } from '@vercel/speed-insights';
+import { SpeedInsights } from "@vercel/speed-insights/react"
+
 import type { LinksFunction, LoaderFunctionArgs } from 'react-router';
 import stylesheet from '~/tailwind.css?url';
 import Footer from '~/components/Footer';
@@ -49,7 +51,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 type LoaderData = { user: User | null; cart: CartItem[] | null };
-
+// injectSpeedInsights();
 export default function App() {
   const { user, cart } = useLoaderData<LoaderData>();
   const location = useLocation();
@@ -85,7 +87,7 @@ export default function App() {
           <Outlet />
         </SnackbarProvider>
         {!isExemptPage && <Footer />}
-        {/* <SpeedInsights /> */}
+        <SpeedInsights />
         <Scripts />
       </body>
     </html>

@@ -38,7 +38,7 @@ const Computers: React.FC<{
                 </div>
                 <div className='bg-white p-2.5 flex flex-col gap-1 shadow-lg rounded-b-lg'>
                   <Link
-                    to={`${computer.id}`}
+                    to={`products/${computer.id}`}
                     className='text-primary hover:text-secondary font-space'>
                     {computer.name}
                   </Link>
